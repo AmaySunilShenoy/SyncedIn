@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@700&family=Inclusive+Sans&family=Onest&family=Oswald:wght@700&family=Young+Serif&display=swap" rel="stylesheet">
+  <title>Welcome</title>
+  <style>
+    body {
+      background-color: white;
+      margin: 0;
+      padding: 0;
+      font-family: 'Oswald', sans-serif;
+      overflow: hidden;
+    }
+    .nav-bar {
+      width: 100%;
+      background-color: white;
+      color: black;
+      display: flex;
+      padding: 10px;
+    }
+    .logo-name {
+      display: flex;
+      align-items: center;
+    }
+    .logo-name img {
+      height: 30px;
+      padding: 10px;
+    }
+    .link-container {
+      margin-left: auto;
+      width: 30%;
+    }
+    .links {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      align-items: center;
+      height: 100%;
+    }
+    .links a {
+      color: #0077b5;
+      text-decoration: none;
+    }
+    .container{
+      display: flex;
+      flex-direction: column;
+    }
+    .mainContent {
+      background-color: white;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 200px;
+      flex: 5;
+    }
+    .welcomeMessage {
+      background-color: white;
+      color: #0077b5;
+      font-size: 90px;
+      font-family: 'Gabarito', serif;
+    }
+    .subMessage {
+      font-family: 'Onest';
+    }
+    .mainButtonsContainer {
+      margin-top: 60px;
+      width: 40%;
+    }
+    .mainButtons {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      font-family: 'Onest';
+    }
+    a{
+      text-decoration: none;
+      color: #0077b5;
+      transition: all 0.3s ease-in-out;
+    }
+    a:visited{
+      text-decoration: none;
+      color: #0077b5;
+    }
+    a:hover{
+      scale: 1.1;
+    }
+    button {
+  width: 160px;
+  height: 50px;
+  color: white;
+  border: 3px solid white;
+  border-radius: 45px;
+  transition: all 0.3s;
+  cursor: pointer;
+  background: #0077b5;
+  font-size: 1em;
+  font-weight: 550;
+  font-family: 'Montserrat', sans-serif;
+  transition: all 0.3s ease-in-out;
+}
+
+button:hover {
+  color: white;
+  border:3px solid white;
+  transform: scale(1.05);
+  translate: 0px -5px;
+
+}
+  </style>
+</head>
+<body>
+  <div class="body">
+    <nav class='nav-bar'>
+      <div class='logo-name'>
+        <img src="../static/images/other_images/logo.png" alt="Logo" height="30px" style="padding: 10px;">
+        <a href="/" style="color:#0077b5">SyncedIn</a>
+      </div>
+      <div class='link-container'>
+        <div class="links">
+          <a href="/">Home</a>
+          <a href="/about-us/">About Us</a>
+          <a href="/signup">Sign Up</a>
+          <a href="/login">Login</a>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+      <div class='mainContent'>
+        <div class="welcomeMessage">
+          Welcome to SyncedIn
+        </div>
+        <div class="subMessage">
+          The best place to connect to your career!
+        </div>
+        <div class="mainButtonsContainer">
+          <div class="mainButtons">
+            <button onclick="window.location.href='/signup'">Get Started</button>
+            <button>Learn More</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="background-color: #0077b5;flex: 1;margin-top: 150px;height:100vh">
+    </div>
+  </div>
+</body>
+</html>

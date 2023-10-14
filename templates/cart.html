@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<!-- Coding By CodingNepal - www.codingnepalweb.com -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amayzon</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Gabarito:wght@700&family=Inclusive+Sans&family=Onest&family=Oswald:wght@700&family=Young+Serif&display=swap"
+        rel="stylesheet">
+
+</head>
+
+<body>
+    <div class="alert-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for message in messages %}
+        {% if message[0] == 'message' %}
+        {% set message_type = 'danger' %}
+        {% else %}
+        {% set message_type = message[0] %}
+        {% endif %}
+        <div class="alert-div">
+            <div class="alert alert-{{ message_type }}" role="alert"
+                style="position: absolute;width: 500px;align-self: center;">
+                {{ message[1] }}
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+    <header>
+        <nav class="navbar">
+            <div class="nav-logo">
+                <a href="/home"><img src="https://cdn-icons-png.flaticon.com/128/5998/5998077.png" alt="logo"
+                        style="height: 40px;width: auto;filter: invert(1);"></a>
+            </div>
+            <div class="address">
+                <a href="#" class="deliver">Deliver</a>
+                <div class="map-icon">
+                    <span class="material-symbols-outlined">location_on</span>
+                    <a href="#" class="location">France</a>
+                </div>
+            </div>
+
+            <div class="nav-search">
+                <select class="select-search">
+                    <option>All</option>
+                    <option>All Categories</option>
+                    <option>Amayzon Devices</option>
+                </select>
+                <input type="text" placeholder="Search Amayzon" class="search-input">
+                <div class="search-icon">
+                    <span class="material-symbols-outlined">search</span>
+                </div>
+            </div>
+
+            <div class="sign-in">
+                <a href="#">
+                    <p>Signed in as:</p>
+                    <span>{{user.username}}</span>
+                </a>
+            </div>
+
+            <div class="returns">
+                <a href="#">
+                    <p>Returns</p>
+                    <span>&amp; Orders</span>
+                </a>
+            </div>
+
+            <div class="cart">
+                <a href="/cart">
+                    <span class="material-symbols-outlined cart-icon">shopping_cart</span>
+                </a>
+                {{cart_count}}<br>
+                Cart
+            </div>
+
+            <div class="profile_pic">
+                <a href="#">
+                </a>
+                <div class="profilePic"><img src="../static/images/{{user.profile_picture}}" height="40px" width="40px">
+                </div>
+            </div>
+            <div class="logout">
+                <a href="/logout"><img src="https://cdn-icons-png.flaticon.com/128/660/660350.png"
+                        style="height: 25px; width: auto;filter: invert(1);margin-right: auto;" alt="logout"></a>
+            </div>
+        </nav>
+
+        <div class="banner">
+            <div class="banner-content">
+                <div class="panel">
+                    <span class="material-symbols-outlined">menu</span>
+                    <a href="/products/all">All</a>
+                </div>
+
+                <ul class="links">
+                    <li><a href="/products/smartphones">Smartphones</a></li>
+                    <li><a href="/products/fashion">Fashion</a></li>
+                    <li><a href="/products/furniture">Furniture</a></li>
+                    <li><a href="/products/pet">Pets</a></li>
+                </ul>
+                <div class="deals">
+                    <a href="#">Shop deals in Electronics</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero-section small"
+        style="display: flex;flex-direction: column;justify-content: center;align-items: center;background-image: url('https://static.vecteezy.com/system/resources/previews/003/031/766/original/light-blue-wide-background-with-radial-blurred-gradient-abstract-free-vector.jpg');">
+        <h1 class="categoryHeading"><strong>Cart</strong></h1>
+    </section>
+    {% if cart_products %}
+    <section class="product-section" style="display: flex;width: 100%;position: relative;">
+        <button type="submit" class="CartBtn" style="color: white;background-color: red;cursor: pointer;position: absolute;right: 40%;top: 3%;"
+            onclick="clearCart()">
+            <span class="IconContainer" style="color: black;font-weight: bolder;font-size: larger;">
+                <img src="https://cdn-icons-png.flaticon.com/128/3096/3096687.png" height="12px" width="12px">
+            </span>
+            <p class="carttext">Clear cart</p>
+        </button>
+        <div class="product-listing"
+            style="flex:4;margin: 30px;display: flex;flex-direction: column;width: 100%;max-height: fit-content;min-width: fit-content;overflow-y: auto;scrollbar-width: none;">
+            {% for product in cart_products %}
+            <div class="cardContainer"
+                style="width: 100%;display: flex;flex-direction: column;justify-content: center;">
+                <div class="cartItem cartshadow"
+                    style="position: relative;width: 70%;margin-left: 40px;margin-top: 10px;margin-bottom: 10px;">
+                    <div class="product-addcart" style="position: absolute;top: 10px;right: 10px;">
+                        <div class="number-control" style="margin:10px;visibility: visible;">
+                            <form action="/removefromcart" method="POST" class="removefromcart">
+                                <input type="hidden" value="{{product.product_id}}" name="product_id">
+                                <div class="number-left" onclick="deleteForm(this)"></div>
+                            </form>
+                            <div class="number-quantity" style="scale: 0.90;text-align: center;">{{product.count}}
+                            </div>
+                            <form action="/addtocart" method="POST" class="addtocart">
+                                <input type="hidden" name="product_id" class="number-quantity"
+                                    value="{{product.product_id}}">
+                                <div class="number-right" onclick="addForm(this)"></div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="product-total" style="position: absolute;bottom: 10px;right: 10px;text-align: center;">
+                        <p>€{{product.price }} x {{product.count}} = €{{product.price * product.count }}</p>
+                    </div>
+                    <a href="/product/{{product.product_id}}">
+                        <div class="title-image" style="display: flex;">
+                            <div class="product-image" style="pointer-events: none;margin-bottom: 15px;">
+                                <img src="{{product.image}}" alt="{{product.title}} -img"
+                                    style="height: 100px;width: auto;">
+                            </div>
+                            <div class="product-title"
+                                style="display: grid;margin: 10px;font-family: Gabarito;font-size: 20px;pointer-events: none;">
+                                {{product.title}}
+                                <div class="product-price"
+                                    style="font-family: Onest;font-size: 15px;border-bottom: 2px solid black;pointer-events: none;justify-self: flex-start;align-self: flex-start;">
+                                    €{{product.price}}
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="options" style="flex:1;justify-self: center;margin-right:10%;margin-top: 2%;">
+            <div class="card shadow nohover"
+                style="position: relative;display: flex;flex-direction: column;align-items: center;">
+                <div class="product-title"
+                    style="font-family: Onest;font-size: 20px;border-bottom: 2px solid black;pointer-events: none;">
+                    Order Details
+                </div>
+                <div class="product-image" style="pointer-events: none;margin-bottom: 15px;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 10px; text-align: left;">Price ({{total_count}} items):</td>
+                            <td style="padding: 10px; text-align: right;">€{{total_price}}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; text-align: left;">Discount:</td>
+                            <td style="padding: 10px; text-align: right;">€0</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; text-align: left;">Delivery:</td>
+                            <td style="padding: 10px; text-align: right;"><b style="color: goldenrod;">Free</b></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; text-align: left;">Total Price:</td>
+                            <td style="padding: 10px; text-align: right;">€{{total_price}}</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="product-price"
+                    style="font-family: Onest;font-size: 15px;display: flex;width: 100%;justify-content: center;">
+                    <div class="placeOrder" style="align-self: flex-start;margin: 5px;">
+                        <button type="submit" class="CartBtn"
+                            style="color: white;background-color: goldenrod;cursor: pointer;" onclick="openPayment()">
+                            <span class="IconContainer">
+                                <img src="https://cdn-icons-png.flaticon.com/128/1250/1250925.png" height="12px" width="12px">
+                            </span>
+                            <p class="carttext">Add Details</p>
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="paymentDiv" id="payment"
+                style="visibility: hidden; display: flex; justify-content: center; align-items: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5);">
+                <div class="card shadow nohover"
+                    style="width: 400px; background-color: white; padding: 20px; border-radius: 10px;">
+                    <h2 class="product-title"
+                        style="font-family: Onest; font-size: 24px; border-bottom: 2px solid black; margin-bottom: 20px;">
+                        Payment Details</h2>
+                        <p style="position: absolute;top:10px;right: 10px;font-weight: bolder;cursor: pointer;" onclick="closePayment()">X</p>
+                    <form action="/cart" method="POST">
+                        {{ paymentform.hidden_tag() }}
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 10px; text-align: left;">{{ paymentform.address.label }}</td>
+                                <td style="padding: 10px; text-align: right;">{{ paymentform.address }}</td>
+                            </tr>
+                            {% for error in paymentform.address.errors %}
+                            <tr>
+                                <td colspan="2">
+                                    <div class="error-div">
+                                        <span class="text-danger">{{ error }}</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            <tr>
+                                <td style="padding: 10px; text-align: left;">{{ paymentform.card_number.label }}</td>
+                                <td style="padding: 10px; text-align: right;">{{ paymentform.card_number }}</td>
+                            </tr>
+                            {% for error in paymentform.card_number.errors %}
+                            <tr>
+                                <td colspan="2">
+                                    <div class="error-div">
+                                        <span class="text-danger">{{ error }}</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                            <tr>
+                                <td style="padding: 10px; text-align: left;">{{ paymentform.expiry_date.label }}</td>
+                                <td style="padding: 10px; text-align: right;">{{ paymentform.expiry_date }}</td>
+                            </tr>
+                            {% for error in paymentform.expiry_date.errors %}
+                            <tr>
+                                <td colspan="2">
+                                    <div class="error-div">
+                                        <span class="text-danger">{{ error }}</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                            <tr>
+                                <td style="padding: 10px; text-align: left;">{{ paymentform.cvv.label }}</td>
+                                <td style="padding: 10px; text-align: right;">{{ paymentform.cvv }}</td>
+                            </tr>
+                            {% for error in paymentform.cvv.errors %}
+                            <tr>
+                                <td colspan="2">
+                                    <div class="error-div">
+                                        <span class="text-danger">{{ error }}</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                            <tr>
+                                <td style="padding: 10px; text-align: left;">Total Price:</td>
+                                <td style="padding: 10px; text-align: right;">€{{ total_price }}</td>
+                            </tr>
+                        </table>
+                        <div class="product-price"
+                            style="font-family: Onest; font-size: 15px; display: flex; justify-content: center; margin-top: 20px;">
+                            <div class="placeOrder" style="align-self: flex-start;">
+                                {{ paymentform.submit(class='CartBtn', style='background-color: green; color: white;
+                                cursor: pointer;') }}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </section>
+    {% else %}
+    <section style="margin-top: 30px;margin-bottom: 200px;">
+        <h3 align='center'>You have no items to order.</h3><br />
+    </section>
+    {% endif %}
+    <footer>
+        <a href="#" class="footer-title">
+            Back to top
+        </a>
+        <div class="footer-items">
+            <ul>
+                <h3>Get to Know Us</h3>
+                <li><a href="#">About us</a></li>
+                <li><a href="#">Careers</a></li>
+                <li><a href="#">Press Release</a></li>
+                <li><a href="#">Amazon Science</a></li>
+            </ul>
+            <ul>
+                <h3>Connect with Us</h3>
+                <li><a href="#">Facebook</a></li>
+                <li><a href="#">Twitter</a></li>
+                <li><a href="#">Instagram</a></li>
+            </ul>
+            <ul>
+                <h3>Make Money with Us</h3>
+                <li><a href="#">Sell on Amazon</a></li>
+                <li><a href="#">Sell under Amazon Accelerator</a></li>
+                <li><a href="#">Protect and Build Your Brand</a></li>
+                <li><a href="#">Amazon Global Selling</a></li>
+                <li><a href="#">Become an Affiliate</a></li>
+                <li><a href="#">Fulfillment by Amazon</a></li>
+                <li><a href="#">Advertise Your Products</a></li>
+                <li><a href="#">Amazon Pay on Merchants</a></li>
+            </ul>
+            <ul>
+                <h3>Let Us Help You</h3>
+                <li><a href="#">COVID-19 and Amazon</a></li>
+                <li><a href="#">Your Account</a></li>
+                <li><a href="#">Return Centre</a></li>
+                <li><a href="#">100% Purchase Protection</a></li>
+                <li><a href="#">Amazon App Download</a></li>
+                <li><a href="#">Help</a></li>
+            </ul>
+        </div>
+    </footer>
+
+</body>
+<script>
+    const alertDiv = document.querySelector('.alert-div')
+    const alertContainer = document.querySelector('.alert-container')
+
+    function hideAlert() {
+        console.log('in hide alert')
+        alertContainer.classList.remove('open')
+    }
+
+    if (alertDiv) {
+        alertContainer.classList.add('open');
+        setTimeout(hideAlert, 2000);
+    }
+
+
+    const paymentDiv = document.querySelector('#payment')
+
+    function openPayment() {
+        paymentDiv.style.visibility = 'visible';
+    }
+    function closePayment(){
+        paymentDiv.style.visibility = 'hidden'
+    }
+
+    function clearCart(){
+        window.location.href = '/clearcart'
+    }
+
+    function addForm(el) {
+        console.log('add')
+        el.parentElement.submit()
+    }
+
+    function deleteForm(el) {
+        console.log('del')
+        el.parentElement.submit()
+    }
+
+</script>
+
+</html>

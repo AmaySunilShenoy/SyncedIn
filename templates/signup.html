@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@700&family=Inclusive+Sans&family=Onest&family=Oswald:wght@700&family=Young+Serif&display=swap" rel="stylesheet">
+  <link href="/static/signup.css" rel="stylesheet">
+  <link href="/static/login.css" rel="stylesheet">
+  <title>Signup</title>
+  <style>
+     body {
+      background-color: white;
+      margin: 0;
+      padding: 0;
+      font-family: 'Oswald', sans-serif;
+      overflow: hidden;
+    }
+    .input{
+      border: 2px solid;
+    }
+    .input:focus{
+      border:2px solid gold
+    }
+    .nav-bar {
+      width: 100%;
+      background-color: white;
+      color: black;
+      display: flex;
+      padding: 10px;
+    }
+    .logo-name {
+      display: flex;
+      align-items: center;
+    }
+    .logo-name img {
+      height: 30px;
+      padding: 10px;
+    }
+    .link-container {
+      margin-left: auto;
+      width: 30%;
+    }
+    .links {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      align-items: center;
+      height: 100%;
+    }
+    .links a {
+      color: #0077b5;
+      text-decoration: none;
+    }
+    a{
+      text-decoration: none;
+      color: #0077b5;
+      transition: all 0.3s ease-in-out;
+    }
+    a:visited{
+      text-decoration: none;
+      color: #0077b5;
+    }
+    a:hover{
+      scale: 1.1;
+    }
+    .signup-w3ls{
+      scale: 0.9;
+    }
+    form{
+      scale: 0.9;
+    }
+    .input{
+      border: 2px solid;
+      margin: 10px;
+    }
+    .input:focus{
+      border:2px solid #0077b5
+    }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: white;
+  font-family: 'Oswald', sans-serif;
+}
+
+.nav-bar {
+  background-color: white;
+  color: black;
+  display: flex;
+  padding: 10px;
+}
+
+.logo-name {
+  display: flex;
+  align-items: center;
+}
+
+.logo-name img {
+  height: 30px;
+  padding: 10px;
+}
+
+.link-container {
+  margin-left: auto;
+  width: 30%;
+}
+
+.links {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  align-items: center;
+  height: 100%;
+}
+
+.links a {
+  color: #0077b5;
+  text-decoration: none;
+  transition: all 0.3s ease-in-out;
+}
+
+.links a:visited {
+  color: #0077b5;
+}
+
+.links a:hover {
+  transform: scale(1.1);
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 20px;
+}
+
+.form-control {
+  margin: 10px;
+  width: 100%;
+}
+
+.input {
+  border: 2px solid;
+  padding: 10px;
+  transition: border-color 0.3s ease-in-out;
+}
+
+.input:focus {
+  border-color: #0077b5;
+}
+
+#profile-container {
+  display: flex;
+  justify-content: center;
+}
+
+#profileImage {
+  max-width: 100%;
+  height: auto;
+  cursor: pointer;
+}
+.footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.conditions a {
+  text-decoration: none;
+  color: #0077b5;
+  margin-right: 20px;
+}
+
+.alert-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 500px;
+  z-index: 999;
+}
+
+.alert {
+  position: relative;
+  width: 500px;
+  align-self: center;
+}
+
+.close {
+  cursor: pointer;
+}
+
+
+  </style>
+</head>
+<body>
+  <nav class='nav-bar'>
+    <div class='logo-name'>
+      <img src="../static/images/other_images/logo.png" alt="Logo" height="30px" style="padding: 10px;">
+      <a href="/" style="color:#0077b5">SyncedIn</a>
+    </div>
+    <div class='link-container'>
+      <div class="links">
+        <a href="/">Home</a>
+        <a href="/about-us/">About Us</a>
+        <a href="/login">Login</a>
+      </div>
+    </div>
+  </nav>
+  <header>
+    <!--Amazon Image Logo-->
+    <div class="d-flex flex-row justify-content-center">
+      <div class="row">
+        <div class="col-md">
+          <img class="img_1" src="../static/images/other_images/logo.png" alt="SyncedIn Logo" />
+        </div><!--Col 1 End-->
+      </div><!--Row 1 End-->
+    </div><!--Container End-->
+    <!--Amazon Image Logo-->
+  </header>
+  
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  {% for message in messages %}
+  {% if message[0] == 'message' %}
+  {% set message_type = 'danger' %}
+  {% else %}
+  {% set message_type = message[0] %}
+  {% endif %}
+  <div class="alert-div"
+    style="display: flex;flex-direction: column;justify-content: center;position: absolute;top:0px;left:500px;z-index: 999;">
+    <div class="alert alert-{{ message_type }} alert-dismissible fade show" role="alert"
+      style="position: relative;width: 500px;align-self: center;">
+      {{ message[1] }}
+    </div>
+  </div>
+  {% endfor %}
+  {% endif %}
+  {% endwith %}
+
+  <!--Form-->
+  <div class="d-flex flex-row justify-content-center">
+    <div class="row">
+      <div class="col-md">
+        <form action="/signup" method="post" enctype="multipart/form-data">
+          {{form.hidden_tag()}}
+  
+          <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+          <div class="profile-container-container" style="display: flex;justify-content: center;">
+            <div id="profile-container">
+              <image id="profileImage" src="/static/images/profile_pictures/default-profile-pic.jpg" />
+            </div>
+          </div>
+          {{form.profile_picture(id='imageUpload')}}
+  
+          <div class="form-control">
+            {{ form.username.label(class='header',placeholder = 'Username') }}
+            {{ form.username(id='website',class='input')}}
+            {% for error in form.username.errors %}
+            <div class="error-div">
+              <span class="text-danger">{{ error }}</span>
+            </div>
+            {% endfor %}
+          </div>
+  
+          <div class="form-control">
+            {{ form.email.label(class='header',placeholder = 'Email') }}
+            {{ form.email(id='website')}}
+            {% for error in form.email.errors %}
+            <div class="error-div">
+              <span class="text-danger">{{ error }}</span>
+            </div>
+            {% endfor %}
+          </div>
+  
+          <div class="form-control">
+            {{ form.password.label(class='header',placeholder = 'Password') }}
+            {{ form.password(id='website')}}
+            {% for error in form.password.errors %}
+            <div class="error-div">
+              <span class="text-danger">{{ error }}</span>
+            </div>
+            {% endfor %}
+          </div>
+  
+          <div class="form-control">
+            {{ form.confirm_password.label(class='header',placeholder = 'Confirm Password') }}
+            {{ form.confirm_password(id='website')}}
+            {% for error in form.confirm_password.errors %}
+            <div class="error-div">
+              <span class="text-danger">{{ error }}</span>
+            </div>
+            {% endfor %}
+          </div>
+          <div class="form-control" style="border: none;">
+            {{ form.submit(class='register',style="margin-left: 200px;padding-right: 10px;")}}
+          </div>
+  
+        </form>
+      </div><!--Col 1 End-->
+    </div><!--Row 1 End-->
+  </div><!--Container End-->
+  <!--Form-->
+
+
+
+
+  <div class="d-flex flex-row justify-content-center footer_1">
+    <div class="row">
+      <div class="col">
+        <p class="conditions"><a>Conditions of Use &nbsp &nbsp &nbsp </a> <a>Privacy Notice&nbsp &nbsp &nbsp </a>
+          <a>Help&nbsp &nbsp &nbsp </a></p>
+      </div><!--Footer Col 1 End-->
+    </div><!--Footer Row 1 End-->
+
+  </div>
+  <script>
+    const closeMessageDiv = document.querySelector('.alert')
+    const closeMessageButton = document.querySelector('.close')
+
+    if (closeMessageButton) {
+      closeMessageButton.addEventListener('click', () => {
+        closeMessageDiv.style.display = 'none'
+      }
+      )
+    }
+
+    const alertDiv = document.querySelector('.alert-div')
+
+    function hideAlert() {
+      const alertDiv = document.querySelector('.alert-div')
+      alertDiv.style.display = 'none'
+    }
+
+    if (alertDiv) {
+      setTimeout(hideAlert, 2000)
+    }
+  </script>
+</body>
+
+</html>
+
+<script>
+  $("#profileImage").click(function (e) {
+    $("#imageUpload").click();
+  });
+
+  function fasterPreview(uploader) {
+    if (uploader.files && uploader.files[0]) {
+      $('#profileImage').attr('src',
+        window.URL.createObjectURL(uploader.files[0]));
+    }
+  }
+
+  $("#imageUpload").change(function () {
+    fasterPreview(this);
+  });
+</script>
+
+</html>
+

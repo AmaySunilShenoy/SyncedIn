@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>SyncedIn</title>
+
+  <link rel="shortcut icon" type="image/png" href="/images/favicon.ico" />
+  <link rel="stylesheet" href="../static/css/home.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Gabarito:wght@700&family=Inclusive+Sans&family=Onest&family=Oswald:wght@700&family=Young+Serif&display=swap"
+    rel="stylesheet">
+
+  <script src="/script.js"></script>
+  <script src="https://kit.fontawesome.com/3055f91a99.js"></script>
+</head>
+
+<body>
+  <!-- HEADER -->
+  <header id="main-header">
+    <div>
+      <div>
+        <img id="header-logo" src="../static/images/other_images/logo.png" alt="SyncedIn" />
+        <img id="header-picture-menu" src="../static/images/{{user.profile_picture}}" alt="Profile picture" />
+        <span id="header-picture-menu-bars">
+          <span class="fas fa-bars"></span>
+        </span>
+
+        <div>
+          <input id="search" type="text" placeholder="       Search" onfocus="toggleSearchInput()"
+            onblur="toggleSearchInput()" />
+          <span id="search-icon" class="fas fa-search"></span>
+          <span id="search-button" class="fas fa-search"></span>
+        </div>
+        <span class="fas fa-comments"></span>
+      </div>
+      <nav>
+        <ul>
+          <li>
+            <div id="home" class="selected">
+              <span class="fas fa-home"></span>
+              <span class="nav-item-text">Home</span>
+            </div>
+          </li>
+          <li>
+            <div id="jobs">
+              <span class="fas fa-suitcase"></span>
+              <span class="nav-item-text">Jobs</span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <span class="fas fa-envelope"></span>
+              <span class="nav-item-text">Saved</span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <span class="fas fa-bell"></span>
+              <span class="nav-item-text">Notifications</span>
+            </div>
+          </li>
+          <li>
+            <div id="right-border">
+              <img src="../static/images/{{user.profile_picture}}" alt="Profile picture" />
+
+              <span class="nav-item-text">
+                Me<span class="fas fa-caret-down"> </span></span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <span class="fas fa-th"></span>
+
+              <span class="nav-item-text">Work<span class="fas fa-caret-down"> </span></span>
+            </div>
+          </li>
+          <li id="premium">
+            <div>
+              <a href="#">Try Premium Free for 1 Month</a>
+            </div>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <!-- LOADING PAGE -->
+  <div id="loading-page">
+    <div>
+      <img src="../static/images/other_images/logo.png" alt="" />
+      <div id="dot-loader">
+        <div class="lds-ellipsis">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- MAIN CONTAINER -->
+  <div class="container">
+    <!-- LEFT ASIDE -->
+    <div id="left-aside-wrapper">
+      <aside id="left-aside">
+        <div id="profile-card">
+          <div id="background"></div>
+          <div id="profile-info">
+            <img src="../static/images/{{user.profile_picture}}" alt="Profile picture" />
+            <strong id="profile-name">{{ user.username.capitalize() }}</strong>
+          </div>
+          <div id="profile-links">
+            <a href="#">
+              <span>
+                Who's viewed your profile
+              </span>
+              <span class="profile-number">
+                102
+              </span>
+            </a>
+            <a href="#">
+              <span>
+                Connections
+              </span>
+              <span class="profile-number">
+                452
+              </span>
+            </a>
+          </div>
+          <span>Grow your network</span>
+          <a href="#">
+            <span>Access exclusive tools & insights</span>
+            <span id="profile-premium">
+              <span id="profile-square">■</span> Try Premium
+              Free for 1 Month</span>
+          </a>
+        </div>
+        <div id="profile-groups">
+          <section>
+            <header onmouseover="showProfileGroupIcon(this)" onmouseout="showProfileGroupIcon(this)">
+              <span>Recent</span>
+              <span class="fas fa-angle-up" onclick="toggleProfileGroupList(this)"></span>
+            </header>
+            <ul class="group-list">
+              <li>
+                <span class="fas fa-users"></span>
+                <span>React Developers</span>
+              </li>
+              <li>
+                <span class="fas fa-hashtag"></span>
+                <span>javascript</span>
+              </li>
+              <li>
+                <span class="fas fa-hashtag"></span>
+                <span>webdevelopment</span>
+              </li>
+              <li>
+                <span class="fas fa-users"></span>
+                <span>Javascript Brasil</span>
+              </li>
+              <li>
+                <span class="fas fa-users"></span>
+                <span>Dog Lovers</span>
+              </li>
+            </ul>
+          </section>
+          <section>
+            <header onmouseover="showProfileGroupIcon(this)" onmouseout="showProfileGroupIcon(this)">
+              <span class="group-title">Groups</span>
+              <span class="fas fa-angle-up" onclick="toggleProfileGroupList(this)"></span>
+            </header>
+            <ul>
+              <li>
+                <span class="fas fa-users"></span>
+                <span id="aaaa">React Developers</span>
+              </li>
+              <li>
+                <span class="fas fa-users"></span>
+                <span>Javascript Brasil</span>
+              </li>
+              <li>
+                <span class="fas fa-users"></span>
+                <span>Dog Lovers</span>
+              </li>
+            </ul>
+            <div class="group-list">
+              <a href="#">See all</a>
+            </div>
+          </section>
+          <section>
+            <header onmouseover="showProfileGroupIcon(this)" onmouseout="showProfileGroupIcon(this)">
+              <span class="group-title">
+                Followed Hashtags</span>
+              <span class="fas fa-angle-up" onclick="toggleProfileGroupList(this)"></span>
+            </header>
+            <ul>
+              <li>
+                <span class="fas fa-hashtag"></span>
+                <span>javascript</span>
+              </li>
+              <li>
+                <span class="fas fa-hashtag"></span>
+                <span>webdevelopment</span>
+              </li>
+            </ul>
+            <a href="#">See all</a>
+          </section>
+          <a href="#">Discover more</a>
+        </div>
+      </aside>
+    </div>
+    <!-- MAIN -->
+    <div id="main-wrapper">
+      <main id="main-section">
+        <div id="feed-sort">
+          <hr />
+          <button>
+            <span>Sort by:</span>
+            <strong>Top</strong>
+            <span class="fas fa-sort-down"></span>
+          </button>
+        </div>
+        <div class="job-container">
+          {% for job in jobs %}
+          <div class="job">
+            <div class="job-posting">
+              <div class="job-data">
+                <p class="job-name">{{job.job_name}}</p>
+                <p class="job-company" style="font-family: 'Inclusive Sans';">{{job.company_name}}</p>
+                <p class="job-location" style="font-family: 'Inclusive Sans';">{{job.location}}</p>
+                <div class="job-description" style="margin-top: 30px;">
+                  <p>{{job.job_description}}</p>
+                </div>
+              </div>
+            </div>
+            </div>
+            {% endfor %}
+          </div>
+
+      </main>
+    </div>
+  </div>
+</body>
+<script>
+  function toggleSearchInput() {
+    const button = document.getElementById("search-button");
+    const icon = document.getElementById("search-icon");
+    const input = document.getElementById("search");
+
+    if (button.style.display === "block") {
+      button.style.display = "none";
+      icon.style.display = "block";
+      input.placeholder = "       Search";
+    } else {
+      button.style.display = "block";
+      icon.style.display = "none";
+      input.placeholder = "";
+    }
+  }
+
+  function showProfileGroupIcon(element) {
+    const [icon] = element.querySelectorAll("span.fas");
+
+    if (icon.style.display === "block") {
+      icon.style.display = "none";
+    } else {
+      icon.style.display = "block";
+    }
+  }
+
+  function toggleProfileGroupList(icon) {
+    const list = icon.parentElement.nextElementSibling;
+    const link = list.nextElementSibling;
+
+    if (icon.className === "fas fa-angle-up") {
+      icon.className = "fas fa-angle-down";
+      list.style.display = "none";
+      if (link) {
+        link.style.display = "none";
+      }
+    } else {
+      icon.className = "fas fa-angle-up";
+      list.style.display = "block";
+      if (link) {
+        link.style.display = "block";
+      }
+    }
+  }
+
+  function showRecommendationsInfo(element) {
+    const [div, span, square] = element.children;
+
+    if (div.style.display === "block") {
+      div.style.display = "none";
+      span.style.display = "none";
+      square.style.display = "none";
+    } else {
+      div.style.display = "block";
+      span.style.display = "block";
+      square.style.display = "block";
+    }
+  }
+
+  function waitPageLoading() {
+    const loadingPage = document.getElementById("loading-page");
+    const [container] = document.getElementsByClassName("container");
+    const header = document.getElementById("main-header").firstElementChild;
+
+    loadingPage.style.display = "none";
+    header.style.display = "flex";
+    container.style.display = "grid";
+
+    if (navigator.appVersion.indexOf("Chrome/") != -1) {
+      const profileName = document.getElementById("profile-name");
+      const postAuthorName = document.getElementById("post-author-name");
+
+      const profileSquare = document.getElementById("profile-square");
+
+      const elements = [profileName, postAuthorName];
+
+      console.log(elements);
+
+      elements.map((element) => {
+        element.classList.add("letter-spacing");
+      });
+
+      profileSquare.classList.add("font-16");
+    }
+  }
+
+  window.addEventListener("scroll", (e) => {
+    const profileGroup = document.getElementById("profile-groups");
+    const SyncedInSection = document.getElementById("SyncedIn-section");
+    const rightAside = document.getElementById("right-aside");
+
+    if (window.scrollY > 356) {
+      profileGroup.classList.add("position-fixed");
+      SyncedInSection.classList.add("position-fixed", "right-aside-fixed");
+      rightAside.classList.add("vanish");
+    } else {
+      profileGroup.classList.remove("position-fixed");
+      SyncedInSection.classList.remove("position-fixed", "right-aside-fixed");
+      rightAside.classList.remove("vanish");
+    }
+  });
+
+  window.addEventListener('DOMContentLoaded', waitPageLoading);
+</script>
+
+</html>

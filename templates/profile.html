@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home / Twitter</title>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <link rel="stylesheet" href="node_modules/reset.css/reset.css">
+
+
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+
+    <link rel="icon" href="favicon.png">
+
+</head>
+
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for message in messages %}
+    {% if message[0] == 'message' %}
+    {% set message_type = 'danger' %}
+    {% else %}
+    {% set message_type = message[0] %}
+    {% endif %}
+    <div class="alert-div" style="display: flex;flex-direction: column;justify-content: center;position: absolute;top:0px;width: 100%;z-index: 999;text-align: center;">
+        <div class="alert alert-{{ message_type }} alert-dismissible fade show" role="alert"
+            style="position: relative;width:100%;align-self: center;">
+            {{ message[1] }}
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <div class="container">
+        <nav>
+            <div class="nav_logo-wrapper" style="margin-bottom: 20px;">
+                <svg class="nav_logo" viewBox="0 0 24 24" aria-hidden="true"
+                    class="r-1cvl2hr r-4qtqp9 r-yyyyoo r-16y2uox r-8kz0gk r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-lrsllp">
+                    <g>
+                        <path
+                            d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z">
+                        </path>
+                    </g>
+                </svg>
+                <h1 style="display: inline;margin-bottom: 10px;">Twitter</h1>
+            </div>
+
+            <a href="/home" class="menu-links">
+                <div class="Menu_options active">
+                    <span class="material-icons">home</span>
+                    <h2>Home</h2>
+                </div>
+            </a>
+
+            <a href="/profile/{{user.username}}" class="menu-links">
+                <div class="Menu_options">
+                    <span class="material-icons">person</span>
+                    <h2 style="color:#50b7f5">Profile</h2>
+                </div>
+            </a>
+        </nav>
+
+
+        <div style="position:absolute;bottom:50px;left:150px">
+            <form action="/logout" method="post">
+                <button class="Btn">
+
+                    <div class="sign"><svg viewBox="0 0 512 512">
+                            <path
+                                d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z">
+                            </path>
+                        </svg></div>
+                    <div class="text">Logout</div>
+                </button>
+            </form>
+        </div>
+
+
+        <main>
+            <div class="header">
+                <h2>Profile</h2>
+                <div style="text-align: center;">
+                    <h3>Manage your Tweets here</h3>
+                </div>
+            </div>
+            {% for tweet in tweets %}
+            <div class="post" data-tweet-id="{{tweet.tweet_id}}">
+                <div class="post_profile-image">
+                    <img src="../static/{{tweet.profile_picture}}" alt="Image Failed">
+                </div>
+
+                <div class="post_body">
+                    <div class="post_header">
+                        <div class="post_header-text" style="position: relative;">
+                            <h3 style="display: inline;">{{ tweet.username }}
+                                <span class="header-icon-section">
+                                    <span class="material-icons post_badge">verified</span>@{{ tweet.username.lower() }}
+                                </span>
+                            </h3>
+                            <i class="uil uil-pen" id="edit_tweet" onclick="editTweet('{{ tweet.tweet_id | safe}}')"
+                                style="position:absolute;right:40px"></i>
+                            <i class="uil uil-trash" id="delete_tweet"
+                                onclick="deleteTweet('{{ tweet.tweet_id | safe}}')"
+                                style="position:absolute;right:20px"></i>
+                        </div>
+
+                        <div class="post_header-discription">
+                            <div class="tweet-content">
+                                <p> {{ tweet.content }}</p>
+                            </div>
+                            {% if tweet.media %}
+                            <div class="tweet_image"
+                                style="display: flex;flex-direction: column;justify-content: center;align-items: center;position: relative;">
+                                <img src="../static/{{tweet.media}}" height="200px" width="200px"
+                                    style='border-radius:10px'>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="post_footer">
+
+                        <span class="material-icons">chat</span>
+                        <span class="material-icons">repeat</span>
+                        <span class="material-icons">favorite_border</span>
+                        <span class="material-icons">file_upload</span>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+            {% endfor %}
+        </main>
+    </div>
+</body>
+<script>
+    const deleteTweet = (tweetId) => {
+        let confirmDel = confirm('Are you sure you want to delete this tweet?');
+        console.log(confirmDel)
+        if (confirmDel) {
+            window.location.href = `/delete_tweet/${tweetId}`;
+        }
+    }
+
+    const editTweet = (tweetId) => {
+        const tweet = document.querySelector(`[data-tweet-id='${tweetId}']`)
+        const tweet_content_div = tweet.querySelector('.tweet-content')
+        const tweet_content = tweet_content_div.getElementsByTagName('p')[0].innerHTML
+        tweet_content_div.classList.add('edit-form')
+
+        tweet_content_div.innerHTML = `
+        <form action='/edit_tweet/${tweetId}' method='post' enctype="multipart/form-data">
+        {{edit_form.content(class='tweet_box-input-input-edit',value='${tweet_content}')}}
+        <label style="display: flex;justify-content: center;align-items: center;" id="form-label">
+                        {{edit_form.submit(class='tweet_box-input-button')}}
+                      </label>
+        </form>
+        <div id="tweet_uploaded_image" style="display: flex;flex-direction: column;justify-content: center;align-items: center;position: relative;">
+
+</div>`
+
+        const tweet_image_div = tweet.querySelector('.tweet_image')
+        if (tweet_image_div) {
+
+            const image = tweet_image_div.getElementsByTagName('img')[0]
+            const image_src = image.getAttribute('src')
+
+            tweet_image_div.innerHTML = `<i class="uil uil-times"onclick="cancelImage(this)" style="position:absolute;right:15px;font-size:1.5em;top:0px"></i><img src='${image_src}' height=auto width='400px' style='border-radius:10px;margin-top:10px;'>`
+        }
+        else {
+            const label = document.querySelector('#form-label')
+            label_html = label.innerHTML
+            label.innerHTML = `<i class="uil uil-image-v" style="color:#50b7f5;font-size: 25px;margin-top: 20px;"></i>
+                        {{edit_form.tweet_image(class='tweet_box-input-image',id='new_uploaded_image',onchange='displayImage()')}}` + label_html
+
+        }
+
+
+    }
+
+    const cancelImage = (el) => {
+        const div = el.parentElement
+        div.innerHTML = ''
+        const label = document.querySelector('#form-label')
+        label_html = label.innerHTML
+        label.innerHTML = `<i class="uil uil-image-v" style="color:#50b7f5;font-size: 25px;margin-top: 20px;"></i>
+                        {{edit_form.tweet_image(class='tweet_box-input-image',id='new_uploaded_image',onchange='displayImage()')}}` + label_html
+
+    }
+
+    const displayImage = () => {
+        console.log('here')
+        const uploaded_image = document.querySelector('#new_uploaded_image')
+        const uploaded_image_div = document.querySelector('#tweet_uploaded_image')
+        uploaded_image_div.innerHTML = `<br><br><i class="uil uil-times"onclick="cancelNewImage(this)" style="position:absolute;right:5px;font-size:1.5em;top:5px"></i><img src='${window.URL.createObjectURL(uploaded_image.files[0])}' height=auto width='400px' style='border-radius:10px;margin-top:10px'>`
+    }
+
+    const cancelNewImage = (el) => {
+        const div = el.parentElement
+        div.innerHTML = ''
+        const uploaded_image = document.querySelector('#new_uploaded_image')
+        uploaded_image.value = null
+    }
+
+
+    const alertDiv = document.querySelector('.alert-div')
+
+    function hideAlert(){
+        const alertDiv = document.querySelector('.alert-div')
+        alertDiv.style.display = 'none'
+    }
+
+    if(alertDiv){
+        setTimeout(hideAlert, 2000)
+    }
+
+</script>
+
+</html>

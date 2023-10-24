@@ -260,5 +260,10 @@ a:visited, a:hover, a{
 	
   }
   
-  
-  
+table{
+	text-align: center;
+}
+
+td {
+	padding: 10px;
+}

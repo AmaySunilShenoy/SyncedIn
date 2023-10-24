@@ -1,10 +1,13 @@
 from flask import jsonify
 import datetime
 from flask_pymongo import ObjectId
+import re
+from models.sqlite_functions import get_by_id as get_user_by_id
 
 
-def get_jobs(collection):
-    jobs = list(collection.find())
+
+def get_jobs(job_collection,save_collection,user_id):
+    jobs = list(job_collection.find())
     job_list = []
     for job in jobs:
         job_data = {
@@ -18,114 +21,185 @@ def get_jobs(collection):
             "part_time": job['part_time'],
             "location": job['location'],
             "latitude": job['latitude'],
-            "longitude": job['longitude']
+            "longitude": job['longitude'],
+            "saved": if_job_saved(save_collection,job['_id'],user_id)
         }
         job_list.append(job_data)
     return jsonify(job_list)
 
 
-def get_product_by_id(collection,product_id):
-    product = collection.find_one({'_id':ObjectId(product_id)})
-    product_data = {
-            'product_id': str(product['_id']),
-            'title': product['title'],
-            'description': product['description'],
-            'price': product['price'],
-            'image': product['image'],
-            'category' : product['category']
-        }
-    return jsonify(product_data)
-
-def get_products_by_category(collection,category):
-    if category == 'all':
-        result = list(collection.find())
+def get_job_by_id(job_collection,job_id,user_id=None,save_collection=None):
+    job = job_collection.find_one({'_id':ObjectId(job_id)})
+    if job:
+        job_data = {
+                'job_id': str(job['_id']),
+                "company_name": job['company_name'],
+                "job_name": job['job_name'],
+                "job_description": job['job_description'],
+                "duration": job['duration'],
+                "when_needed": job['when_needed'],
+                "average_pay": job['average_pay'],
+                "part_time": job['part_time'],
+                "location": job['location'],
+                "latitude": job['latitude'],
+                "longitude": job['longitude'],
+                "saved": if_job_saved(save_collection,job['_id'],user_id) if user_id else None
+            }
+        return jsonify(job_data)
     else:
-        result = list(collection.find({'category': category}))
-    product_list = []
-    for product in result:
-        product_data = {
-            'product_id': str(product['_id']),
-            'title': product['title'],
-            'description': product['description'],
-            'price': product['price'],
-            'image': product['image'],
-            'category' : product['category']
-        }
-        product_list.append(product_data)
-    return jsonify(product_list)
+        return jsonify({"data":False})
 
-
-
-def add_product_to_user_cart(collection,product_id,user_id):
+def save_job_to_user(collection,job_id,user_id):
     item = {
-        'product_id':ObjectId(product_id),
+        'job_id':ObjectId(job_id),
         'user_id':user_id,
+        'date_applied':datetime.datetime.now()
     }
     try:
         result = collection.insert_one(item)
-        return True
+        return jsonify({"data":True})
     except:
+        return jsonify({"data":False})
+    
+def unsave_job_from_user(collection,job_id,user_id):
+    try:
+        collection.delete_one({'job_id':ObjectId(job_id),'user_id':user_id})
+        return jsonify({"data":True})
+    except:
+        return jsonify({"data":False})
+    
+def if_job_saved(collection,job_id,user_id):
+    count = len(list(collection.find({'job_id':ObjectId(job_id),'user_id':user_id})))
+    if count == 0:
         return False
+    else:
+        return True
+    
+def get_saved_jobs(job_collection,save_collection,user_id):
+    jobs = list(save_collection.find({'user_id':user_id}))
+    job_list = []
+    for job in jobs:
+        job_data = get_job_by_id(job_collection,str(job['job_id']),user_id,save_collection).json
+        job_list.append(job_data)
+    return jsonify(job_list)
 
-def get_product_count_in_cart(collection,user_id,product_id):
-    count = len(list(collection.find({'user_id':user_id,'product_id':ObjectId(product_id)})))
-    return count
+def search_jobs(search_term, job_collection, save_collection, user_id, onlySaved=False):
+    regex_pattern = re.compile(f".*{search_term}.*", re.IGNORECASE)
 
-def get_cart_count(collection,user_id):
-    count = len(list(collection.find({'user_id':user_id})))
-    return count
+    job_filter = {
+        "$or": [
+            {"company_name": {"$regex": regex_pattern}},
+            {"job_name": {"$regex": regex_pattern}},
+            {"job_desc": {"$regex": regex_pattern}},
+            {"duration": {"$regex": regex_pattern}},
+            {"location": {"$regex": regex_pattern}},
+        ]
+    }
 
-def get_all_products_in_cart(collection1,collection2,user_id):
-    products = list(collection1.find({'user_id':user_id}))
-    product_list = []
-    unique_items = []
-    total_count = 0
-    total_price = 0
-    for product_dict in products:
-        if product_dict['product_id'] not in unique_items:
-            unique_items.append(product_dict['product_id'])
-            product = get_product_by_id(collection2,str(product_dict['product_id'])).json
-            product_count = len(list(collection1.find({'product_id' : ObjectId(product_dict['product_id'])})))
-            total_count += product_count
-            total_price += product_count * product['price']
-            product_data = {
-                'item_id' : str(product_dict['_id']),
-                'product_id': str(product['product_id']),
-                'title': product['title'],
-                'description': product['description'],
-                'price': product['price'],
-                'image': product['image'],
-                'category' : product['category'],
-                'count': product_count
-        }
-            product_list.append(product_data)
-    return jsonify(product_list), total_count, total_price
+    jobs = list(job_collection.find(job_filter))
 
-def place_order(collection,address,card_number,expiry_date,cvv,user_id):
-    order = {
-        'address':address,
+    job_list = []
+    
+    for job in jobs:
+        if not onlySaved or if_job_saved(save_collection, str(job['_id']), user_id):
+            job_data = {
+                'job_id': str(job['_id']),
+                "company_name": job['company_name'],
+                "job_name": job['job_name'],
+                "job_description": job['job_description'],
+                "duration": job['duration'],
+                "when_needed": job['when_needed'],
+                "average_pay": job['average_pay'],
+                "part_time": job['part_time'],
+                "location": job['location'],
+                "latitude": job['latitude'],
+                "longitude": job['longitude'],
+                "saved": if_job_saved(save_collection, str(job['_id']), user_id)
+            }
+            job_list.append(job_data)
+
+    return jsonify(job_list)
+
+
+def create_application(collection,job_collection,save_collection, job_id, user_id, application):
+    item = {
+        'job_id':ObjectId(job_id),
+        'job_details': get_job_by_id(job_collection, job_id, user_id, save_collection).json,
         'user_id':user_id,
-        'card_number':card_number,
-        'expiry date':expiry_date,
-        'cvv':cvv
+        'application_details':application,
+        'status':'Pending Review',
+        'date_applied':datetime.datetime.now()
     }
     try:
-        result = collection.insert_one(order)
-        return True
+        result = collection.insert_one(item)
+        return jsonify({"data":True})
     except:
-        return False
+        return jsonify({"data":False})
+    
+# User / Admin
+def get_applications(collection,job_collection,save_collection, user_id):
+    if user_id == 'admin':
+        applications = list(collection.find())
+    else:
+        applications = list(collection.find({'user_id':user_id}))
+    application_list = []
+    for application in applications:
+        application_data = {
+            'job_id': str(application['job_id']),
+            'application_id': str(application['_id']),
+            'user_id': str(application['user_id']),
+            'user_info': get_user_by_id(application['user_id']),
+            'application_details': application['application_details'],
+            'status': application['status'],
+            'date_applied': application['date_applied'],
+            'job_details': application['job_details']
+        }
+        application_list.append(application_data)
+    return jsonify(application_list)
 
+def get_application_by_id(collection,application_id):
+    application = collection.find_one({'_id':ObjectId(application_id)})
+    if application:
+        application_data = {
+            'job_id': str(application['job_id']),
+            'application_id': str(application['_id']),
+            'user_id': str(application['user_id']),
+            'user_info': get_user_by_id(application['user_id']),
+            'application_details': application['application_details'],
+            'status': application['status'],
+            'date_applied': application['date_applied'],
+            'job_details': application['job_details']
+        }
+        return jsonify(application_data)
+    else:
+        return jsonify({"data":False})
 
-def delete_cart_item(collection,product_id):
+def delete_user_application(application_collection,application_id,isAdmin=False):
+    if isAdmin:
+        try:
+            application = application_collection.find_one({'_id':ObjectId(application_id)})
+            print(application)
+            application_collection.update_many({'_id': ObjectId(application_id)}, {'$set': {'status': 'Rejected'}})
+            return jsonify({"data":True})
+        except:
+            return jsonify({"data":False})
+    else:
+        try:
+            application_collection.delete_one({'_id':ObjectId(application_id)})
+            return jsonify({"data":True})
+        except:
+            return jsonify({"data":False})
+
+# Admin
+
+def delete_job(collection, save_collection, application_collection, job_id):
     try:
-        collection.delete_one({'product_id':ObjectId(product_id)})
-        return True
+        application_collection.update_many({'job_id': ObjectId(job_id)}, {'$set': {'status': 'Job Deleted'}})
+        save_collection.delete_many({'job_id': ObjectId(job_id)})
+        collection.delete_one({'_id': ObjectId(job_id)})
+        return jsonify({"data": True})
     except:
-        return False
+        return jsonify({"data": False})
 
-def clear_cart(collection,user_id):
-    try:
-        collection.delete_many({'user_id':user_id})
-        return True
-    except:
-        return False
+
+# Admin

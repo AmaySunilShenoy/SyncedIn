@@ -733,6 +733,8 @@ main#main-section div#link-box a:hover {
     align-items: center;
     margin: 6px;
     margin-left: auto;
+    width: 460%;
+    transition: all 0.3s;
 }
 
 #feed-sort hr {
@@ -1500,7 +1502,9 @@ div#dot-loader {
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
     padding: 10px;
     background-color: #f9f9f9;
-    height: 180px;
+    min-height: 180px;
+    transition: all 1s ease-in-out;
+    width: auto;
 }
 
 .job-data{
@@ -1532,7 +1536,7 @@ div#dot-loader {
     width: 450px;
     margin-top: 200px;
     position: relative;
-    right: 30px;
+    right: 160px;
 }
 
 div#sideLoading > div {
@@ -1636,7 +1640,44 @@ div#sideLoading img {
   }
 
 
-  /* Form css */
+  /* Base alert styles */
+.alert {
+    padding: 15px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+/* Danger alert */
+.alert.alert-danger {
+    background-color: #f44336; /* Red background color */
+    color: white; /* White text color */
+}
+
+/* Success alert */
+.alert.alert-success {
+    background-color: #4CAF50; /* Green background color */
+    color: white; /* White text color */
+}
+
+/* Dismissible alerts */
+.alert-dismissible {
+    position: relative;
+    padding-right: 30px;
+}
+
+/* Fade animation */
+.fade {
+    opacity: 0;
+    transition: opacity 0.2s linear;
+}
+
+.show {
+    opacity: 1;
+}
+
+
+/* Form css */
 
 .apply-form{
     display: flex;
@@ -1699,41 +1740,4 @@ div#sideLoading img {
 .text-danger {
     color: #FF6347;
     font-size: 12px;
-}
-
-
-/* Base alert styles */
-.alert {
-    padding: 15px;
-    border: 1px solid transparent;
-    border-radius: 4px;
-    margin: 10px 0;
-}
-
-/* Danger alert */
-.alert.alert-danger {
-    background-color: #f44336; /* Red background color */
-    color: white; /* White text color */
-}
-
-/* Success alert */
-.alert.alert-success {
-    background-color: #4CAF50; /* Green background color */
-    color: white; /* White text color */
-}
-
-/* Dismissible alerts */
-.alert-dismissible {
-    position: relative;
-    padding-right: 30px;
-}
-
-/* Fade animation */
-.fade {
-    opacity: 0;
-    transition: opacity 0.2s linear;
-}
-
-.show {
-    opacity: 1;
 }

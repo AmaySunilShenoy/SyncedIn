@@ -1,12 +1,23 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, FileField, IntegerField, TextAreaField
-from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError, NoneOf
+from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
+from flask_wtf.file import FileAllowed, FileRequired
 
 class SignUpForm(FlaskForm):
     def __init__(self, existing_usernames=None, existing_emails=None):
         super(SignUpForm, self).__init__()
         self.existing_usernames = existing_usernames
         self.existing_emails = existing_emails
+
+    firstname = StringField('First Name', validators=[
+        DataRequired(),
+        Length(min=2, max=20)
+        ])
+    
+    lastname = StringField('Last Name', validators=[
+        DataRequired(),
+        Length(min=2, max=20)
+        ])
 
     username = StringField('Username', validators=[
         DataRequired(),
@@ -20,7 +31,8 @@ class SignUpForm(FlaskForm):
 
     password = PasswordField('Password', validators=[
         DataRequired(),
-        Length(min=5, max=20)
+        Length(min=5, max=20),
+        
     ])
 
     confirm_password = PasswordField('Confirm Password', validators=[
@@ -33,12 +45,14 @@ class SignUpForm(FlaskForm):
     submit = SubmitField('Sign Up')
 
     def validate_username(self, username):
-        if username.data in self.existing_usernames:
-            raise ValidationError('This username is already in use! Please choose another username')
+        if self.existing_usernames:
+            if username.data in self.existing_usernames:
+                raise ValidationError('This username is already in use! Please choose another username')
 
     def validate_email(self, email):
-        if email.data in self.existing_emails:
-            raise ValidationError('This email address is already registered with an account!')
+        if self.existing_emails:
+            if email.data in self.existing_emails:
+                raise ValidationError('This email address is already registered with an account!')
 
 
 class LogInForm(FlaskForm):
@@ -55,24 +69,32 @@ class LogInForm(FlaskForm):
     submit = SubmitField('Log In')
 
 
-class PaymentForm(FlaskForm):
-    address = TextAreaField('Address', validators=[
-        DataRequired(),
-        Length(min=5,max=100)
-    ])
-    card_number = StringField('Card Number', validators=[
-        DataRequired(),
-        Length(min=16,max=16)
-    ])
+class ApplicationForm(FlaskForm):
 
-    expiry_date = StringField('Expiry Date', validators=[
+    firstname = StringField('First Name', validators=[
         DataRequired(),
-        Length(min=5,max=5)
-    ])
-
-    cvv = StringField('CVV', validators=[
+        Length(min=2, max=20)
+        ])
+    lastname = StringField('Last Name', validators=[
         DataRequired(),
-        Length(min=3,max=3)
+        Length(min=2, max=20)
+        ])
+    email = StringField('Email', validators=[
+        DataRequired(),
+        Email()
     ])
+    phone = IntegerField('Phone Number', validators=[
+        DataRequired(),
+        ])
+    address = StringField('Address', validators=[
+        DataRequired(),
+        Length(min=10, max=100)
+        ])
+    
+    cv = FileField('Upload CV', validators=[FileAllowed(['pdf', 'doc', 'docx', 'png', 'jpg', 'jpeg'])])
 
-    submit = SubmitField('Place Order')
+    comments = TextAreaField('Comments', validators=[
+        Length(min=0, max=100)
+        ])
+    
+    submit = SubmitField('Apply for Position')

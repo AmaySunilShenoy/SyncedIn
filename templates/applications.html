@@ -7,9 +7,8 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
   <title>SyncedIn</title>
 
-
   <link rel="shortcut icon" type="image/png" href="/images/favicon.ico" />
-  <link rel="stylesheet" href="../static/css/home.css" />
+  <link rel="stylesheet" href="../static/css/saved.css" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,9 +17,6 @@
     rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-
-  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
-
 
   <script src="/script.js"></script>
   <script src="https://kit.fontawesome.com/3055f91a99.js"></script>
@@ -52,7 +48,7 @@
     <div>
       <div>
         <img id="header-logo" src="../static/images/other_images/logo.png" alt="SyncedIn"
-          style="filter: invert(0.5);" onclick="window.location.href = '/home' "/>
+          style="filter: invert(0.5);" />
         <img id="header-picture-menu" src="../static/images/{{user.profile_picture}}" alt="Profile picture" />
         <span id="header-picture-menu-bars">
           <span class="fas fa-bars"></span>
@@ -66,31 +62,34 @@
               onclick="this.parentElement.submit"></span>
           </form>
         </div>
-
         <span class="fas fa-comments"></span>
       </div>
       <nav>
         <ul>
-          <li>
-            <div id="home" class="selected" onclick="window.location.href = '/home' ">
+          {% if not user.is_admin %}
+          <li onclick="window.location.href = '/home' ">
+            <div id="home">
               <span class="fas fa-home"></span>
               <span class="nav-item-text">Home</span>
             </div>
           </li>
+          {% endif %}
           <li>
             <div id="jobs" onclick="window.location.href ='/jobs'">
               <span class="fas fa-suitcase"></span>
               <span class="nav-item-text">Jobs</span>
             </div>
           </li>
+          {% if not user.is_admin %}
           <li>
             <div id="saved" onclick="window.location.href ='/saved'">
               <span class="fas fa-envelope"></span>
               <span class="nav-item-text">Saved</span>
             </div>
           </li>
+          {% endif %}
           <li>
-            <div id="application" onclick="window.location.href = '/applications' ">
+            <div id="application" class="selected" onclick="window.location.href ='/applications'">
               <span class="fa-solid fa-inbox"></span>
               <span class="nav-item-text">Applications</span>
             </div>
@@ -134,116 +133,8 @@
     </div>
   </div>
   <!-- MAIN CONTAINER -->
-  <div class="container" class="blur-background">
+  <div class="container">
     <!-- LEFT ASIDE -->
-    <div id="left-aside-wrapper" class="blur-background">
-      <aside id="left-aside">
-        <div id="profile-card">
-          <div id="background"></div>
-          <div id="profile-info">
-            <img src="../static/images/{{user.profile_picture}}" alt="Profile picture" />
-            <strong id="profile-name">{{ user.username.capitalize() }}</strong>
-          </div>
-          <div id="profile-links">
-            <a href="#">
-              <span>
-                Who's viewed your profile
-              </span>
-              <span class="profile-number">
-                102
-              </span>
-            </a>
-            <a href="#">
-              <span>
-                Connections
-              </span>
-              <span class="profile-number">
-                452
-              </span>
-            </a>
-          </div>
-          <span>Grow your network</span>
-          <a href="#">
-            <span>Access exclusive tools & insights</span>
-            <span id="profile-premium">
-              <span id="profile-square">■</span> Try Premium
-              Free for 1 Month</span>
-          </a>
-        </div>
-        <div id="profile-groups">
-          <section>
-            <header onmouseover="showProfileGroupIcon(this)" onmouseout="showProfileGroupIcon(this)">
-              <span>Recent</span>
-              <span class="fas fa-angle-up" onclick="toggleProfileGroupList(this)"></span>
-            </header>
-            <ul class="group-list">
-              <li>
-                <span class="fas fa-users"></span>
-                <span>React Developers</span>
-              </li>
-              <li>
-                <span class="fas fa-hashtag"></span>
-                <span>javascript</span>
-              </li>
-              <li>
-                <span class="fas fa-hashtag"></span>
-                <span>webdevelopment</span>
-              </li>
-              <li>
-                <span class="fas fa-users"></span>
-                <span>Javascript Brasil</span>
-              </li>
-              <li>
-                <span class="fas fa-users"></span>
-                <span>Dog Lovers</span>
-              </li>
-            </ul>
-          </section>
-          <section>
-            <header onmouseover="showProfileGroupIcon(this)" onmouseout="showProfileGroupIcon(this)">
-              <span class="group-title">Groups</span>
-              <span class="fas fa-angle-up" onclick="toggleProfileGroupList(this)"></span>
-            </header>
-            <ul>
-              <li>
-                <span class="fas fa-users"></span>
-                <span id="aaaa">React Developers</span>
-              </li>
-              <li>
-                <span class="fas fa-users"></span>
-                <span>Javascript Brasil</span>
-              </li>
-              <li>
-                <span class="fas fa-users"></span>
-                <span>Dog Lovers</span>
-              </li>
-            </ul>
-            <div class="group-list">
-              <a href="#">See all</a>
-            </div>
-          </section>
-          <section>
-            <header onmouseover="showProfileGroupIcon(this)" onmouseout="showProfileGroupIcon(this)">
-              <span class="group-title">
-                Followed Hashtags</span>
-              <span class="fas fa-angle-up" onclick="toggleProfileGroupList(this)"></span>
-            </header>
-            <ul>
-              <li>
-                <span class="fas fa-hashtag"></span>
-                <span>javascript</span>
-              </li>
-              <li>
-                <span class="fas fa-hashtag"></span>
-                <span>webdevelopment</span>
-              </li>
-            </ul>
-            <a href="#">See all</a>
-          </section>
-          <a href="#">Discover more</a>
-        </div>
-      </aside>
-    </div>
     <!-- MAIN -->
     <div id="main-wrapper" class="blur-background">
       <div id="feed-sort">
@@ -255,36 +146,94 @@
         </button>
       </div>
       <main id="main-section">
-        <p style="font-family: 'Gabarito';font-size: 30px;font-weight: bold;">Recommended for You</p>
-        <div class="job-container" id="job-container">
-          {% for job in jobs %}
+        <p style="font-family: 'Gabarito';font-size: 30px;font-weight: bold;">
+          {% if not user.is_admin %}
+          Your Applications
+          {% else %}
+          Job Applications
+          {% endif %}
+        </p>
+        <div class="job-container">
+          {% if not user.is_admin %}
+          {% for application in applications%}
           <div class="job">
-            <div class="job-posting" onclick="openSidePanel('{{job.job_id}}')">
+            <div class="job-posting" onclick="openSidePanel(this,'{{application.job_details.job_id}}')">
               <div class="job-data">
-                <div class="job-type" style="position: absolute;right:40px;">
-                  {% if job.part_time %}
-                  <p>Part Time</p>
+                <div class="job-status">
+                  {% if application.status == 'Pending Review' %}
+                  <div class="job-type" style="position: absolute;right:15px;background-color: orange;">
+                    <p>Pending Review</p>
+                  </div>
+                  {% elif application.status == 'Approved' %}
+                  <div class="job-type" style="position: absolute;right:15px;background-color: green;">
+                    <p>Approved</p>
+                  </div>
                   {% else %}
-                  <p>Full Time</p>
+                  <div class="job-type" style="position: absolute;right:15px;background-color: red;">
+                    <p>{{ application.status }}</p>
+                  </div>
                   {% endif %}
                 </div>
-                <div class="job-save" style="position: absolute;right:15px;top:5px;cursor: pointer;">
-                  {% if job.saved %}
-                  <i class="fa-solid fa-bookmark" onclick="unSaveJob(this,'{{job.job_id}}');"></i>
-                  {% else %}
-                  <i class="fa-regular fa-bookmark" onclick="saveJob(this,'{{job.job_id}}');"></i>
-                  {% endif %}
-                </div>
-                <p class="job-name">{{job.job_name}}</p>
-                <p class="job-company" style="font-family: 'Inclusive Sans';">{{job.company_name}}</p>
-                <p class="job-location" style="font-family: 'Inclusive Sans';">{{job.location}}</p>
+                <span class="fas fa-trash"
+                  onclick="deleteApplication(event,'{{application.application_id}}','{{application.user_id}}')"
+                  style="position: absolute; right: 0;top:10px;cursor: pointer"></span>
+                <p class="job-name">{{application.job_details.job_name}}</p>
+                <p class="job-company" style="font-family: 'Inclusive Sans';">{{application.job_details.company_name}}
+                </p>
+                <p class="job-location" style="font-family: 'Inclusive Sans';">{{application.job_details.location}}</p>
                 <div class="job-description" style="margin-top: 30px;">
-                  <p>{{job.job_description}}</p>
+                  <p>{{application.job_details.job_description}}</p>
                 </div>
               </div>
             </div>
           </div>
           {% endfor %}
+          {% else %}
+          {% for application in applications%}
+          <div class="job">
+            <div class="job-posting" onclick="openSidePanel(this,'{{application.application_id}}')"
+              style="position: relative;">
+              <div class="job-data">
+                <div class="job-status">
+                  {% if application.status == 'Pending Review' %}
+                  <div class="job-type" style="position: absolute;right:15px;background-color: orange;">
+                    <p>Pending Review</p>
+                  </div>
+                  {% elif application.status == 'Approved' %}
+                  <div class="job-type" style="position: absolute;right:15px;background-color: green;">
+                    <p>Approved</p>
+                  </div>
+                  {% else %}
+                  <div class="job-type" style="position: absolute;right:15px;background-color: red;">
+                    <p>{{ application.status }}</p>
+                  </div>
+                  {% endif %}
+                </div>
+                <span class="fas fa-trash"
+                  onclick="deleteApplication(event,'{{application.application_id}}','{{application.user_id}}')"
+                  style="position: absolute; right: 0;top:10px;cursor: pointer"></span>
+                <p class="job-name">{{application.job_details.job_name}}</p>
+                <p class="job-company" style="font-family: 'Inclusive Sans';">{{application.job_details.company_name}}
+                </p>
+                <p class="job-location" style="font-family: 'Inclusive Sans';">{{application.job_details.location}}</p>
+                <div class="job-description" style="margin-top: 30px;">
+                  <p>{{application.job_details.job_description}}</p>
+                </div>
+              </div>
+              <div class="job-user-profile"
+                style="position: absolute;right:30px;bottom:0;display: flex;align-items: center;">
+                <div class="job-profile" style="clip-path: circle(40%);margin: 3px;">
+                  <img src="../static/images/{{application.user_info[6]}}" alt="Profile picture"
+                    style="height: 30px;width: 30px;" />
+                </div>
+                <div class="job-username" style="margin: 3px;">
+                  {{application.user_info[3]}}
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+          {% endif %}
         </div>
 
       </main>
@@ -312,6 +261,25 @@
 </body>
 <script>
 
+  function deleteApplication(event, application_id) {
+    event.stopPropagation();
+
+    const deleteOption = confirm('Are you sure you want to delete this application?')
+
+    if (!deleteOption) {
+      return
+    }
+    fetch(`/delete_application/${application_id}`)
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        window.location.href = '/applications'
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+
   function handleApply(job_id) {
     event.preventDefault();
     const sidePanel = document.getElementById("side-panel");
@@ -324,7 +292,7 @@
       element.style.filter = "blur(10px)";
     });
     sidePanelContent.innerHTML = ``;
-    sidePanel.style.transform = "translate(-45%, -20%)";
+    sidePanel.style.transform = "translate(-30%, -20%)";
     sidePanel.style.minHeight = "65vh"
     sidePanel.style.height = "fit-content";
     sidePanel.style.width = "50vw";
@@ -439,39 +407,28 @@
     }, 1000)
   }
 
-  function handleSearch() {
-    event.preventDefault();
-    const search = document.getElementById("search").value;
-    fetch(`/search/${search}`)
-      .then(response => response.json())
-      .then(data => {
-        const jobContainer = document.getElementById("job-container");
-        jobContainer.innerHTML = "";
-        data.forEach(job => {
-          jobContainer.innerHTML += `
-      <div class="job">
-            <div class="job-posting" onclick="openSidePanel('${job.job_id}')">
-              <div class="job-data">
-                <div class="job-type" style="position: absolute;right:40px;">
-                  ${job.part_time ? '<p>Part Time</p>' : '<p>Full Time</p>'}
-                </div>
-                <div class="job-save" style="position: absolute;right:15px;top:5px;cursor: pointer;">
-                  ${job.saved ? '<i class="fa-solid fa-bookmark" onclick="unSaveJob(this,' + job.job_id + ');"></i>' : '<i class="fa-regular fa-bookmark" onclick="saveJob(this,' + job.job_id + ');"></i>'}
-                </div>
-                <p class="job-name">${job.job_name}</p>
-                <p class="job-company" style="font-family: 'Inclusive Sans';">${job.company_name}</p>
-                <p class="job-location" style="font-family: 'Inclusive Sans';">${job.location}</p>
-                <div class="job-description" style="margin-top: 30px;">
-                  <p>${job.job_description}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-      `
-        });
 
-      });
+  function closeApplyPanel() {
+    const sidePanel = document.getElementById("side-panel");
+    const mainSection = document.getElementById("main-section");
+    const jobContainer = document.getElementsByClassName("job-container")[0];
+    const feedSort = document.getElementById("feed-sort");
+
+    sidePanel.style.display = "none";
+    mainSection.style.width = "1000px";
+    sidePanel.style.position = "relative";
+    sidePanel.style.transform = "translate(0%,0%)";
+    sidePanel.style.height = "70vh";
+    sidePanel.style.width = "450px";
+    feedSort.style.width = '460%';
+
+    const blurBackground = document.querySelectorAll(".blur-background");
+
+    blurBackground.forEach(element => {
+      element.style.filter = "blur(0px)";
+    });
   }
+
 
   function toggleSearchInput() {
     const button = document.getElementById("search-button");
@@ -561,15 +518,18 @@
 
   window.addEventListener('DOMContentLoaded', waitPageLoading);
 
-  function openSidePanel(job_id) {
+  function openSidePanel(element, id) {
     const mainSection = document.getElementById("main-section");
     const jobContainer = document.getElementsByClassName("job-container")[0];
     const sidePanel = document.getElementById("side-panel");
     const sidePanelContent = document.getElementById("side-panel-content");
     const loading = document.getElementById("sideLoading");
+    const feedSort = document.getElementById("feed-sort");
+    const status = element.getElementsByClassName("job-status")[0];
     sidePanelContent.innerHTML = "";
 
     mainSection.style.width = "550px";
+    feedSort.style.width = '260%';
     setTimeout(() => {
       sidePanel.style.display = "block";
       sidePanel.style.position = "fixed";
@@ -579,41 +539,40 @@
 
     setTimeout(() => {
       loading.style.display = "none";
-      fetch(`/job/${job_id}`)
+      if (!{{ user.is_admin }}){
+      fetch(`/job/${id}`)
         .then(response => response.json())
         .then(data => {
-          console.log(data);
-          // Content
           sidePanelContent.innerHTML = `
-        <div class="side-panel-header">
-            <span class="fas fa-times" onclick="closeSidePanel()" style="position: absolute; right: 10px;cursor: pointer"></span>
-            <div class="side-panel-header-content">
-              <div class="side-job-name" style="font-family:'Gabarito';text-align:center;margin-top:25px;display:flex;flex-direction:column;align-items:center;">
-                <p style="font-weight:bold;font-size:30px">${data.job_name}</p>
-                <p style="font-size:20px;margin-top:10px">${data.company_name}</p>
-                <p style="font-size:20px">${data.location}</p>
-                <div class="side-job-type">
-                  <p>${data.part_time ? 'Part Time' : 'Full Time'}</p>
-                </div>
-              </div>
-              <div class="side-job-description" style="font-size:15px;margin-top:30px;font-family:'Onest';padding:20px">
-                ${data.job_description}
-              </div>
-              <div class="side-job-other">
-                <div id="map">
-                  </div>
-                <div class="side-job-type-salary">
-                  <p style="border-bottom:1px solid black"> Requirement </p>
-                  <p>${data.when_needed}</p>
-                  <p style="border-bottom:1px solid black;margin-top:10px;"> Salary </p>
-                  <p>${data.average_pay}</p>
+          <div class="side-panel-header">
+              <span class="fas fa-times" onclick="closeSidePanel()" style="position: absolute; right: 10px;cursor: pointer"></span>
+              <div class="side-panel-header-content">
+                <div class="side-job-name" style="font-family:'Gabarito';text-align:center;margin-top:25px;display:flex;flex-direction:column;align-items:center;">
+                  <p style="font-weight:bold;font-size:30px">${data.job_name}</p>
+                  <p style="font-size:20px;margin-top:10px">${data.company_name}</p>
+                  <p style="font-size:20px">${data.location}</p>
+                  <div class="side-job-type">
+                    <p>${data.part_time ? 'Part Time' : 'Full Time'}</p>
                   </div>
                 </div>
-                <div class="side-job-apply">
-                  <button onclick="handleApply('${job_id}')">Apply</button>
+                <div class="side-job-description" style="font-size:15px;margin-top:30px;font-family:'Onest';padding:20px;">
+                  ${data.job_description}
                 </div>
-            </div>
-      `;
+                <div class="side-job-other">
+                  <div id="map">
+                    </div>
+                  <div class="side-job-type-salary">
+                    <p style="border-bottom:1px solid black"> Requirement </p>
+                    <p>${data.when_needed}</p>
+                    <p style="border-bottom:1px solid black;margin-top:10px;"> Salary </p>
+                    <p>${data.average_pay}</p>
+                    </div>
+                  </div>
+                  <div class="side-job-apply" style="position:absolute;width:40%;left:120px">
+                    ${status.innerHTML}
+                </div>
+              </div>
+        `;
           // Create map
           var mapOptions = {
             zoom: 10,
@@ -635,37 +594,102 @@
           console.error(error);
           loading.style.display = "none";
         });
-    }, 1000);
+    } else {
+      fetch(`/application/${id}`)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          sidePanelContent.innerHTML = `
+          <div class="side-panel-header">
+              <span class="fas fa-times" onclick="closeSidePanel()" style="position: absolute; right: 10px;cursor: pointer"></span>
+              <div class="side-panel-header-content">
+                <div class="side-job-name" style="font-family:'Gabarito';text-align:center;margin-top:25px;display:flex;flex-direction:column;align-items:center;">
+                  <p style="font-weight:bold;font-size:30px">${data.job_details.job_name}</p>
+                  <p style="font-size:20px;margin-top:10px">${data.job_details.company_name}</p>
+                  <p style="font-size:20px">${data.job_details.location}</p>
+                  <div class="side-job-type">
+                    <p>${data.job_details.part_time ? 'Part Time' : 'Full Time'}</p>
+                  </div>
+                </div>
+                <div class="side-job-description" style="font-size:15px;margin-top:10px;font-family:'Onest';padding:20px">
+                  <div class="side-application-details" style="font-size:15px;margin-top:30px;font-family:'Onest';padding:20px">
+                  <p style="border-bottom:1px solid black;text-align:center"> Application Details</p>
+                  <div class="side-application-name" style="display:flex;text-align:center;justify-content:space-between;">
+                  <div class="side-appplication-detail" style="margin:10px;padding:5px;">
+                    <p style="font-weight:bold">Firstname</p>
+                    <p>${data.application_details.firstname}</p>
+                    </div>
+                    <div class="side-appplication-detail" style="margin:10px;padding:5px;">
+                    <p style="font-weight:bold">Lastname</p>
+                    <p>${data.application_details.lastname}</p>
+                    </div>
+                </div>
+
+                <div class="side-application-contact" style="display:flex;text-align:center;justify-content:space-between;">
+                  <div class="side-appplication-detail" style="margin:10px;padding:5px;">
+                    <p style="font-weight:bold">Phone</p>
+                    <p>${data.application_details.phone}</p>
+                    </div>
+                    <div class="side-appplication-detail" style="margin:10px;padding:5px;">
+                    <p style="font-weight:bold">Email</p>
+                    <p>${data.application_details.email}</p>
+                    </div>
+                </div>
+
+                <div class="side-application-comments" style="display:flex;text-align:center;justify-content:center;">
+                  <div class="side-appplication-detail" style="margin:10px;padding:5px;">
+                    <p style="font-weight:bold">Comments</p>
+                    <p>${data.application_details.comments}</p>
+                    </div>
+                </div>
+
+                <div class="side-application-comments" style="display:flex;text-align:center;justify-content:center;">
+                  <div class="side-appplication-detail" style="margin:10px;padding:5px;">
+                    <p style="font-weight:bold">CV</p>
+                    <p>${data.application_details.cv}</p>
+                    </div>
+                </div>
+
+
+                <div class="side-job-other">
+                  <div id="map">
+                    </div>
+                  <div class="side-job-type-salary">
+                    <p style="border-bottom:1px solid black"> Requirement </p>
+                    <p>${data.when_needed}</p>
+                    <p style="border-bottom:1px solid black;margin-top:10px;"> Salary </p>
+                    <p>${data.average_pay}</p>
+                    </div>
+                  </div>
+                  <div class="side-job-apply" style="display:flex;justify-content:space-between">
+                    <div class="job-accept">
+                      Accept
+                      </div>
+                      <div class="job-accept">
+                        Reject
+                      </div>
+
+                </div>
+              </div>
+        `
+        });
+    }
+  }
+    , 1000);
   }
 
   function closeSidePanel() {
     const sidePanel = document.getElementById("side-panel");
     const mainSection = document.getElementById("main-section");
     const jobContainer = document.getElementsByClassName("job-container")[0];
+    const feedSort = document.getElementById("feed-sort");
+
 
     sidePanel.style.display = "none";
     mainSection.style.width = "1000px";
     sidePanel.style.position = "relative";
+    feedSort.style.width = '460%';
 
-  }
-
-  function closeApplyPanel() {
-    const sidePanel = document.getElementById("side-panel");
-    const mainSection = document.getElementById("main-section");
-    const jobContainer = document.getElementsByClassName("job-container")[0];
-
-    sidePanel.style.display = "none";
-    mainSection.style.width = "1000px";
-    sidePanel.style.position = "relative";
-    sidePanel.style.transform = "translate(0%,0%)";
-    sidePanel.style.height = "70vh";
-    sidePanel.style.width = "450px";
-
-    const blurBackground = document.querySelectorAll(".blur-background");
-
-    blurBackground.forEach(element => {
-      element.style.filter = "blur(0px)";
-    });
   }
 
 
@@ -698,36 +722,26 @@
       });
   }
 
-  function showMenu(elem) {
-    console.log('here')
-    elem.parentElement.classList.add("show");
-    document.addEventListener("click", e => {
-      if (e.target.tagName != "I" || e.target != elem) {
-        elem.parentElement.classList.remove("show");
-      }
-    });
+  const closeMessageDiv = document.querySelector('.alert')
+  const closeMessageButton = document.querySelector('.close')
+
+  if (closeMessageButton) {
+    closeMessageButton.addEventListener('click', () => {
+      closeMessageDiv.style.display = 'none'
+    }
+    )
   }
 
-  const closeMessageDiv = document.querySelector('.alert')
-    const closeMessageButton = document.querySelector('.close')
+  const alertDiv = document.querySelector('.alert-div')
 
-    if (closeMessageButton) {
-      closeMessageButton.addEventListener('click', () => {
-        closeMessageDiv.style.display = 'none'
-      }
-      )
-    }
-
+  function hideAlert() {
     const alertDiv = document.querySelector('.alert-div')
+    alertDiv.style.display = 'none'
+  }
 
-    function hideAlert() {
-      const alertDiv = document.querySelector('.alert-div')
-      alertDiv.style.display = 'none'
-    }
-
-    if (alertDiv) {
-      setTimeout(hideAlert, 2000)
-    }
+  if (alertDiv) {
+    setTimeout(hideAlert, 2000)
+  }
 </script>
 <script src="https://kit.fontawesome.com/4f541dc9c0.js" crossorigin="anonymous"></script>
 

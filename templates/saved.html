@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>SyncedIn</title>
+
+  <link rel="shortcut icon" type="image/png" href="/images/favicon.ico" />
+  <link rel="stylesheet" href="../static/css/saved.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Gabarito:wght@700&family=Inclusive+Sans&family=Onest&family=Oswald:wght@700&family=Young+Serif&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+  <script src="/script.js"></script>
+  <script src="https://kit.fontawesome.com/3055f91a99.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</head>
+
+<body>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  {% for message in messages %}
+  {% if message[0] == 'message' %}
+  {% set message_type = 'danger' %}
+  {% else %}
+  {% set message_type = message[0] %}
+  {% endif %}
+  <div class="alert-div"
+    style="display: flex;flex-direction: column;justify-content: center;position: absolute;top:0px;left:500px;z-index: 999;">
+    <div class="alert alert-{{ message_type }} alert-dismissible fade show" role="alert"
+      style="position: relative;width: 500px;align-self: center;">
+      {{ message[1] }}
+    </div>
+  </div>
+  {% endfor %}
+  {% endif %}
+  {% endwith %}
+  <!-- HEADER -->
+  <header id="main-header" class="blur-background">
+    <div>
+      <div>
+        <img id="header-logo" src="../static/images/other_images/logo.png" alt="SyncedIn"
+          style="filter: invert(0.5);" onclick="window.location.href = '/home' " />
+        <img id="header-picture-menu" src="../static/images/{{user.profile_picture}}" alt="Profile picture" />
+        <span id="header-picture-menu-bars">
+          <span class="fas fa-bars"></span>
+        </span>
+
+        <div>
+          <form id="search-form" action="/search" method="POST">
+            <input id="search" type="text" placeholder="Search" name="search_term" onfocus="toggleSearchInput()"
+              onblur="toggleSearchInput()" />
+            <span id="search-button" class="fas fa-search" style="cursor: pointer;"
+              onclick="this.parentElement.submit"></span>
+          </form>
+        </div>
+        <span class="fas fa-comments"></span>
+      </div>
+      <nav>
+        <ul>
+          <li>
+            <div id="home" onclick="window.location.href = '/home' ">
+              <span class="fas fa-home"></span>
+              <span class="nav-item-text">Home</span>
+            </div>
+          </li>
+          <li>
+            <div id="jobs" onclick="window.location.href ='/jobs'">
+              <span class="fas fa-suitcase"></span>
+              <span class="nav-item-text">Jobs</span>
+            </div>
+          </li>
+          <li>
+            <div id="saved" class="selected" onclick="window.location.href ='/saved'">
+              <span class="fas fa-envelope"></span>
+              <span class="nav-item-text">Saved</span>
+            </div>
+          </li>
+          <li>
+            <div id="application" onclick="window.location.href = '/applications' ">
+              <span class="fa-solid fa-inbox"></span>
+              <span class="nav-item-text">Applications</span>
+            </div>
+          </li>
+          <li>
+            <div id="right-border">
+              <img src="../static/images/{{user.profile_picture}}" alt="Profile picture" />
+
+              <span class="nav-item-text">
+                Me<span class="fas fa-caret-down"> </span></span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <span class="fas fa-th"></span>
+
+              <span class="nav-item-text">Work<span class="fas fa-caret-down"> </span></span>
+            </div>
+          </li>
+          <li id="premium">
+            <div>
+              <a href="#">Try Premium Free for 1 Month</a>
+            </div>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <!-- LOADING PAGE -->
+  <div id="loading-page">
+    <div>
+      <img src="../static/images/other_images/logo.png" alt="" />
+      <div id="dot-loader">
+        <div class="lds-ellipsis">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- MAIN CONTAINER -->
+  <div class="container" >
+    <!-- LEFT ASIDE -->
+    <!-- MAIN -->
+    <div id="main-wrapper" class="blur-background">
+      <div id="feed-sort">
+        <hr />
+        <button>
+          <span>Sort by:</span>
+          <strong>Top</strong>
+          <span class="fas fa-sort-down"></span>
+        </button>
+      </div>
+      <main id="main-section">
+        <p style="font-family: 'Gabarito';font-size: 30px;font-weight: bold;">Saved Jobs</p>
+        <div class="job-container">
+          {% for job in jobs %}
+          <div class="job">
+            <div class="job-posting" onclick="openSidePanel('{{job.job_id}}')">
+              <div class="job-data">
+                <div class="job-type" style="position: absolute;right:40px;">
+                  {% if job.part_time %}
+                  <p>Part Time</p>
+                  {% else %}
+                   <p>Full Time</p>
+                  {% endif %}
+                </div>
+                <div class="job-save" style="position: absolute;right:15px;top:5px;cursor: pointer;">
+                  {% if job.saved %}
+                  <i class="fa-solid fa-bookmark" onclick="unSaveJob(this,'{{job.job_id}}');"></i>
+                  {% else %}
+                  <i class="fa-regular fa-bookmark" onclick="saveJob(this,'{{job.job_id}}');"></i>
+                  {% endif %}
+                </div>
+                <p class="job-name">{{job.job_name}}</p>
+                <p class="job-company" style="font-family: 'Inclusive Sans';">{{job.company_name}}</p>
+                <p class="job-location" style="font-family: 'Inclusive Sans';">{{job.location}}</p>
+                <div class="job-description" style="margin-top: 30px;">
+                  <p>{{job.job_description}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+      </main>
+    </div>
+    <!-- RIGHT ASIDE -->
+    <div class="side-panel" id="side-panel" style="display: none;transition: all 0.4s ease-in-out;">
+      <div id="sideLoading" display="none">
+        <div>
+          <img src="../static/images/other_images/logo.png" alt="" />
+          <div id="dot-loader">
+            <div class="lds-ellipsis">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="side-panel-content" style="position: relative;">
+
+      </div>
+    </div>
+  </div>
+</body>
+<script>
+
+function handleApply(job_id) {
+    event.preventDefault();
+    const sidePanel = document.getElementById("side-panel");
+    const sidePanelContent = document.getElementById("side-panel-content");
+
+    const blurBackground = document.querySelectorAll(".blur-background");
+    const loading = document.getElementById("sideLoading");
+
+    blurBackground.forEach(element => {
+      element.style.filter = "blur(10px)";
+    });
+    sidePanelContent.innerHTML = ``;
+    sidePanel.style.transform = "translate(-30%, -20%)";
+    sidePanel.style.minHeight = "65vh"
+    sidePanel.style.height = "fit-content";
+    sidePanel.style.width = "50vw";
+    loading.style.display = "block";
+
+    setTimeout(() => {
+      loading.style.display = "none";
+      fetch(`/job/${job_id}`)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          // Content
+          sidePanelContent.innerHTML = `
+        <div class="side-panel-header">
+            <span class="fas fa-times" onclick="closeApplyPanel()" style="position: absolute; right: 10px;cursor: pointer"></span>
+            <div class="side-panel-header-content">
+              <div class="side-job-name" style="font-family:'Gabarito';text-align:center;margin-top:25px;display:flex;flex-direction:column;align-items:center;">
+                <p style="font-weight:bold;font-size:30px">${data.job_name}</p>
+                <p style="font-size:20px;margin-top:10px">${data.company_name}</p>
+                <p style="font-size:20px">${data.location}</p>
+                <div class="side-job-type">
+                  <p>${data.part_time ? 'Part Time' : 'Full Time'}</p>
+                </div>
+              </div>
+              <div class="apply-form">
+                <div class="apply-form" style="font-size:15px;margin-top:30px;font-family:'Onest';padding:20px">
+                <form action="/apply/${job_id}" method="POST" enctype="multipart/form-data">
+          {{ form.hidden_tag() }}
+          <table>
+            <tr>
+              <td>
+            <div class="form-group">
+            
+                {{form.firstname.label}}<br>
+                {{ form.firstname(class='apply-input text', value=user.firstname.capitalize())}}
+                {% for error in form.firstname.errors %}
+                <span class="text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
+              </td>
+              <td>
+            <div class="form-group">
+                  {{form.lastname.label}}<br>
+                  {{ form.lastname(class='apply-input text', value=user.lastname.capitalize())}}
+                  {% for error in form.lastname.errors %}
+                  <span class="text-danger">{{ error }}</span>
+                  {% endfor %}
+              </div>
+              </td>
+              </tr>
+              <tr>
+                <td>
+              <div class="form-group">
+                  {{form.email.label}}<br>
+                  {{ form.email(class='apply-input text', value=user.email)}}
+                  {% for error in form.email.errors %}
+                  <span class="text-danger">{{ error }}</span>
+                  {% endfor %}
+              </div>
+              </td>
+              <td>
+
+              <div class="form-group">
+                  {{form.phone.label}}<br>
+                  {{ form.phone(class='apply-input phone')}}
+                  {% for error in form.phone.errors %}
+                  <span class="text-danger">{{ error }}</span>
+                  {% endfor %}
+              </div>
+              </td>
+              </tr>
+              <tr>
+                <td>
+
+              <div class="form-group">
+                  {{form.address.label}}<br>
+                  {{ form.address(class='apply-input text')}}
+                  {% for error in form.address.errors %}
+                  <span class="text-danger">{{ error }}</span>
+                  {% endfor %}
+              </div>
+
+              </td>
+              <td>
+
+              <div class="form-group">
+                  {{form.comments.label}}<br>
+                  {{ form.comments(class='apply-input')}}
+                  {% for error in form.comments.errors %}
+                  <span class="text-danger">{{ error }}</span>
+                  {% endfor %}
+              </div>
+            </td>
+            </tr>
+            </table>
+
+            <div class="form-group" style="text-align-last:center;">
+                  {{form.cv.label}}<br>
+                  {{ form.cv(class='apply-input')}}
+                  {% for error in form.comments.errors %}
+                  <span class="text-danger">{{ error }}</span>
+                  {% endfor %}
+              </div>
+
+            <div class="form-group" style="text-align-last:center">
+              {{ form.submit(class='apply-btn',style='background-color: #0077b5; color: white;')}}
+            </div>
+                </div
+            </div>
+      `;
+        })
+    }, 1000)
+  }
+
+
+  function closeApplyPanel() {
+    const sidePanel = document.getElementById("side-panel");
+    const mainSection = document.getElementById("main-section");
+    const jobContainer = document.getElementsByClassName("job-container")[0];
+    const feedSort = document.getElementById("feed-sort");
+
+    sidePanel.style.display = "none";
+    mainSection.style.width = "1000px";
+    sidePanel.style.position = "relative";
+    sidePanel.style.transform = "translate(0%,0%)";
+    sidePanel.style.height = "70vh";
+    sidePanel.style.width = "450px";
+    feedSort.style.width = '460%';
+
+    const blurBackground = document.querySelectorAll(".blur-background");
+
+    blurBackground.forEach(element => {
+      element.style.filter = "blur(0px)";
+    });
+  }
+
+
+    function toggleSearchInput() {
+      const button = document.getElementById("search-button");
+      const icon = document.getElementById("search-icon");
+      const input = document.getElementById("search");
+  
+      if (button.style.display === "block") {
+        button.style.display = "none";
+        icon.style.display = "block";
+        input.placeholder = "       Search";
+      } else {
+        button.style.display = "block";
+        icon.style.display = "none";
+        input.placeholder = "";
+      }
+    }
+  
+    function showProfileGroupIcon(element) {
+      const [icon] = element.querySelectorAll("span.fas");
+  
+      if (icon.style.display === "block") {
+        icon.style.display = "none";
+      } else {
+        icon.style.display = "block";
+      }
+    }
+  
+    function toggleProfileGroupList(icon) {
+      const list = icon.parentElement.nextElementSibling;
+      const link = list.nextElementSibling;
+  
+      if (icon.className === "fas fa-angle-up") {
+        icon.className = "fas fa-angle-down";
+        list.style.display = "none";
+        if (link) {
+          link.style.display = "none";
+        }
+      } else {
+        icon.className = "fas fa-angle-up";
+        list.style.display = "block";
+        if (link) {
+          link.style.display = "block";
+        }
+      }
+    }
+  
+    function showRecommendationsInfo(element) {
+      const [div, span, square] = element.children;
+  
+      if (div.style.display === "block") {
+        div.style.display = "none";
+        span.style.display = "none";
+        square.style.display = "none";
+      } else {
+        div.style.display = "block";
+        span.style.display = "block";
+        square.style.display = "block";
+      }
+    }
+  
+    function waitPageLoading() {
+      const loadingPage = document.getElementById("loading-page");
+      const [container] = document.getElementsByClassName("container");
+      const header = document.getElementById("main-header").firstElementChild;
+  
+      loadingPage.style.display = "none";
+      header.style.display = "flex";
+      container.style.display = "grid";
+  
+      if (navigator.appVersion.indexOf("Chrome/") != -1) {
+        const profileName = document.getElementById("profile-name");
+        const postAuthorName = document.getElementById("post-author-name");
+  
+        const profileSquare = document.getElementById("profile-square");
+  
+        const elements = [profileName, postAuthorName];
+  
+        console.log(elements);
+  
+        elements.map((element) => {
+          element.classList.add("letter-spacing");
+        });
+  
+        profileSquare.classList.add("font-16");
+      }
+    }
+  
+    window.addEventListener('DOMContentLoaded', waitPageLoading);
+  
+    function openSidePanel(job_id) {
+      const mainSection = document.getElementById("main-section");
+      const jobContainer = document.getElementsByClassName("job-container")[0];
+      const sidePanel = document.getElementById("side-panel");
+      const sidePanelContent = document.getElementById("side-panel-content");
+      const loading = document.getElementById("sideLoading");
+      const feedSort = document.getElementById("feed-sort");
+      sidePanelContent.innerHTML = "";
+  
+      mainSection.style.width = "550px";
+      feedSort.style.width = '260%';
+      setTimeout(() => {
+        sidePanel.style.display = "block";
+        sidePanel.style.position = "fixed";
+      }, 200);
+  
+      loading.style.display = "block";
+  
+      setTimeout(() => {
+        loading.style.display = "none";
+        fetch(`/job/${job_id}`)
+          .then(response => response.json())
+          .then(data => {
+            console.log(data);
+            // Content
+            sidePanelContent.innerHTML = `
+          <div class="side-panel-header">
+              <span class="fas fa-times" onclick="closeSidePanel()" style="position: absolute; right: 10px;cursor: pointer"></span>
+              <div class="side-panel-header-content">
+                <div class="side-job-name" style="font-family:'Gabarito';text-align:center;margin-top:25px;display:flex;flex-direction:column;align-items:center;">
+                  <p style="font-weight:bold;font-size:30px">${data.job_name}</p>
+                  <p style="font-size:20px;margin-top:10px">${data.company_name}</p>
+                  <p style="font-size:20px">${data.location}</p>
+                  <div class="side-job-type">
+                    <p>${data.part_time ? 'Part Time': 'Full Time'}</p>
+                  </div>
+                </div>
+                <div class="side-job-description" style="font-size:15px;margin-top:30px;font-family:'Onest';padding:20px">
+                  ${data.job_description}
+                </div>
+                <div class="side-job-other">
+                  <div id="map">
+                    </div>
+                  <div class="side-job-type-salary">
+                    <p style="border-bottom:1px solid black"> Requirement </p>
+                    <p>${data.when_needed}</p>
+                    <p style="border-bottom:1px solid black;margin-top:10px;"> Salary </p>
+                    <p>${data.average_pay}</p>
+                    </div>
+                  </div>
+                  <div class="side-job-apply">
+                  <button onclick="handleApply('${job_id}')">Apply</button>
+                </div>
+              </div>
+        `;
+        // Create map
+        var mapOptions = {
+              zoom: 10,
+              zoomControl: false
+           }
+        var map = L.map('map', mapOptions).setView([data.latitude, data.longitude], 13);
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              maxZoom: 19,
+              attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+  
+  
+            // Add marker
+            L.marker([data.latitude, data.longitude]).addTo(map)
+              .bindPopup(data.company_name)
+              .openPopup();
+          })
+          .catch(error => {
+            console.error(error);
+            loading.style.display = "none";
+          });
+      }, 1000);
+    }
+  
+    function closeSidePanel() {
+      const sidePanel = document.getElementById("side-panel");
+      const mainSection = document.getElementById("main-section");
+      const jobContainer = document.getElementsByClassName("job-container")[0];
+      const feedSort = document.getElementById("feed-sort");
+  
+  
+      sidePanel.style.display = "none";
+      mainSection.style.width = "1000px";
+      sidePanel.style.position = "relative";
+      feedSort.style.width = '460%';
+  
+    }
+  
+  
+    function saveJob(el, jobId) {
+      event.stopPropagation();
+      console.log(jobId)
+      const parent = el.parentElement;
+      parent.innerHTML = `<i class="fa-solid fa-bookmark" onclick="unSaveJob(this,'${jobId}');"></i>`
+      fetch(`/save/${jobId}`)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    }
+  
+    function unSaveJob(el, jobId) {
+      event.stopPropagation();
+      const parent = el.parentElement;
+      parent.innerHTML = `<i class="fa-regular fa-bookmark" onclick="saveJob(this,'${jobId}');"></i>`
+      fetch(`/unsave/${jobId}`)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    }
+
+    const closeMessageDiv = document.querySelector('.alert')
+    const closeMessageButton = document.querySelector('.close')
+
+    if (closeMessageButton) {
+      closeMessageButton.addEventListener('click', () => {
+        closeMessageDiv.style.display = 'none'
+      }
+      )
+    }
+
+    const alertDiv = document.querySelector('.alert-div')
+
+    function hideAlert() {
+      const alertDiv = document.querySelector('.alert-div')
+      alertDiv.style.display = 'none'
+    }
+
+    if (alertDiv) {
+      setTimeout(hideAlert, 2000)
+    }
+  </script>
+<script src="https://kit.fontawesome.com/4f541dc9c0.js" crossorigin="anonymous"></script>
+
+</html>

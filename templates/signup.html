@@ -249,7 +249,7 @@ body {
   {% endwith %}
 
   <!--Form-->
-  <div class="d-flex flex-row justify-content-center">
+  <div class="d-flex flex-row justify-content-center" style="scale:0.9;margin-top: -130px;">
     <div class="row">
       <div class="col-md">
         <form action="/signup" method="post" enctype="multipart/form-data">
@@ -262,6 +262,27 @@ body {
             </div>
           </div>
           {{form.profile_picture(id='imageUpload')}}
+
+          <div class="form-control">
+            {{ form.firstname.label(class='header',placeholder = 'First Name') }}
+            {{ form.firstname(id='website',class='input')}}
+            {% for error in form.firstname.errors %}
+            <div class="error-div">
+              <span class="text-danger">{{ error }}</span>
+            </div>
+            {% endfor %}
+          </div>
+
+
+          <div class="form-control">
+            {{ form.lastname.label(class='header',placeholder = 'Last Name') }}
+            {{ form.lastname(id='website',class='input')}}
+            {% for error in form.lastname.errors %}
+            <div class="error-div">
+              <span class="text-danger">{{ error }}</span>
+            </div>
+            {% endfor %}
+          </div>
   
           <div class="form-control">
             {{ form.username.label(class='header',placeholder = 'Username') }}

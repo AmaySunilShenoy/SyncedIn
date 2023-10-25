@@ -6,24 +6,26 @@ import sqlite3
 from flask_pymongo import PyMongo, ObjectId
 import datetime
 from models.wtforms_class import SignUpForm, LogInForm, ApplicationForm
-from models.mongo_functions import get_jobs, get_job_by_id, save_job_to_user, unsave_job_from_user, get_saved_jobs, search_jobs, create_application, get_applications, delete_job, delete_user_application, get_application_by_id
+from models.mongo_functions import get_jobs, get_job_by_id, save_job_to_user, unsave_job_from_user, get_saved_jobs, search_jobs, create_application, get_applications, delete_job, delete_user_application, get_application_by_id, accept_application
 from models.sqlite_functions import auth, add_user, existing_data, get_by_id
-
+from dotenv import load_dotenv
 from flask_login import login_user, logout_user, login_required, LoginManager, current_user
 from werkzeug.utils import secure_filename
 import logging
 
 
 from models.user_class import User
+load_dotenv()
+
 cache = Cache(config={'CACHE_TYPE': 'SimpleCache'})
 app = Flask(__name__)
 cache.init_app(app)
-app.secret_key = '12231232213'
+app.secret_key = os.getenv('SECRET_KEY')
 
 
 
 #================================================================ MONGO DB ================================================================
-app.config["MONGO_URI"] = "mongodb://localhost:27017/jobs"
+app.config["MONGO_URI"] = os.getenv('MONGO_URI')
 app.config['PROFILE_PICS'] = os.path.join(app.root_path,'static','images','profile_pictures')
 app.config['CV'] = os.path.join(app.root_path,'static','images','cv')
 app.config['DATABASE'] = os.path.join(app.root_path,'users.db')
@@ -197,6 +199,15 @@ async def application(application_id):
     application = get_application_by_id(application_collection,application_id).json
     return application
 
+@app.route('/applications/<status>', methods=['POST','GET'])
+@login_required
+async def application_status(status):
+    if session.get('isAdmin') == True:
+        applications = get_applications(application_collection,job_collection,save_collection,'admin',status).json
+    else:
+        applications = get_applications(application_collection,job_collection,save_collection,current_user.id,status).json
+    return applications
+
 @app.route('/save/<job_id>', methods=['POST','GET'])
 @login_required
 async def savejob(job_id):
@@ -249,8 +260,25 @@ async def apply(job_id):
         return redirect('/home')
     else:
         flash('Your application has not been submitted successfully!', 'danger')
-        print('no')
         return redirect('/home')
+    
+@app.route('/reject/<application_id>', methods=['POST','GET'])
+@login_required
+async def reject(application_id):
+    if session.get('isAdmin'):
+        return delete_user_application(application_collection,application_id,isAdmin=True)
+    else:
+        return redirect('/home')
+    
+@app.route('/accept/<application_id>', methods=['POST','GET'])
+@login_required
+async def accept(application_id):
+    if session.get('isAdmin'):
+        return accept_application(application_collection,application_id)
+    else:
+        return redirect('/home')
+    
+
 
 @app.route('/delete/<job_id>', methods=['POST','GET'])
 @login_required

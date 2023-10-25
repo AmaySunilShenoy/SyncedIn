@@ -44,7 +44,7 @@
   {% endif %}
   {% endwith %}
   <!-- HEADER -->
-  <header id="main-header" class="blur-background">
+  <header class="main-header" class="blur-background">
     <div>
       <div>
         <img id="header-logo" src="../static/images/other_images/logo.png" alt="SyncedIn"
@@ -115,6 +115,14 @@
             </div>
           </li>
         </ul>
+        <form action="/logout" style="position: absolute;top:1px;right:10px">
+          <button class="Btn" style="scale:0.8">
+
+            <div class="sign"><svg viewBox="0 0 512 512"><path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path></svg></div>
+            
+            <div class="btntext">Logout</div>
+          </button>         
+        </form>
       </nav>
     </div>
   </header>
@@ -153,7 +161,36 @@
           Job Applications
           {% endif %}
         </p>
-        <div class="job-container">
+        <div class="job-container" class="width:500px">
+          <div class="main-header" class="blur-background" style="background-color: #F5F5F5;width: 50%;position: relative;margin-left:30%">
+            <div style="display:block;">
+              <nav>
+                <ul>
+                  <li>
+                    <div id="All" class="selected-option new" onclick="handleSection(this,'All')">
+                      <span class="nav-item-text">All</span>
+                    </div>
+                  </li>
+                  <li>
+                    <div id="Pending Review" class="new" onclick="handleSection(this,'Pending Review')">
+                      <span class="nav-item-text">Pending</span>
+                    </div>
+                  </li>
+                  <li>
+                    <div id="Accepted" class="new" onclick="handleSection(this,'Accepted')">
+                      <span class="nav-item-text">Accepted</span>
+                    </div>
+                  </li>
+                  <li>
+                    <div id="Rejected" class="new" onclick="handleSection(this,'Rejected')">
+                      <span class="nav-item-text">Rejected</span>
+                    </div>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+          <div id="whole-job">
           {% if not user.is_admin %}
           {% for application in applications%}
           <div class="job">
@@ -164,9 +201,9 @@
                   <div class="job-type" style="position: absolute;right:15px;background-color: orange;">
                     <p>Pending Review</p>
                   </div>
-                  {% elif application.status == 'Approved' %}
+                  {% elif application.status == 'Accepted' %}
                   <div class="job-type" style="position: absolute;right:15px;background-color: green;">
-                    <p>Approved</p>
+                    <p>Accepted</p>
                   </div>
                   {% else %}
                   <div class="job-type" style="position: absolute;right:15px;background-color: red;">
@@ -183,6 +220,9 @@
                 <p class="job-location" style="font-family: 'Inclusive Sans';">{{application.job_details.location}}</p>
                 <div class="job-description" style="margin-top: 30px;">
                   <p>{{application.job_details.job_description}}</p>
+                </div>
+                <div class="" style="margin-top: 10px;">
+                  {{application.date_applied[:16]}}
                 </div>
               </div>
             </div>
@@ -199,9 +239,9 @@
                   <div class="job-type" style="position: absolute;right:15px;background-color: orange;">
                     <p>Pending Review</p>
                   </div>
-                  {% elif application.status == 'Approved' %}
+                  {% elif application.status == 'Accepted' %}
                   <div class="job-type" style="position: absolute;right:15px;background-color: green;">
-                    <p>Approved</p>
+                    <p>Accepted</p>
                   </div>
                   {% else %}
                   <div class="job-type" style="position: absolute;right:15px;background-color: red;">
@@ -220,6 +260,9 @@
                   <p>{{application.job_details.job_description}}</p>
                 </div>
               </div>
+              <div class="" style="margin-top: 10px;">
+                {{application.date_applied[:16]}}
+              </div>
               <div class="job-user-profile"
                 style="position: absolute;right:30px;bottom:0;display: flex;align-items: center;">
                 <div class="job-profile" style="clip-path: circle(40%);margin: 3px;">
@@ -235,6 +278,7 @@
           {% endfor %}
           {% endif %}
         </div>
+      </div>
 
       </main>
     </div>
@@ -261,24 +305,99 @@
 </body>
 <script>
 
-  function deleteApplication(event, application_id) {
-    event.stopPropagation();
+  function handleSection(element, section) {
+    const all = document.getElementById("All");
+    const pending = document.getElementById("Pending Review");
+    const accepted = document.getElementById("Accepted");
+    const rejected = document.getElementById("Rejected");
 
-    const deleteOption = confirm('Are you sure you want to delete this application?')
+    all.classList.remove("selected-option");
+    pending.classList.remove("selected-option");
+    accepted.classList.remove("selected-option");
+    rejected.classList.remove("selected-option");
 
-    if (!deleteOption) {
-      return
-    }
-    fetch(`/delete_application/${application_id}`)
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
-        window.location.href = '/applications'
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  }
+    element.classList.add("selected-option");
+
+    const wholeJob = document.getElementById("whole-job");
+
+    fetch(`/applications/${section}`).then(response => response.json()).then(data => 
+    {console.log(data)
+      wholeJob.innerHTML = ``;
+      if(data.length > 0){
+      data.forEach(application => {
+        wholeJob.innerHTML += `
+        {% if not user.is_admin %}
+        <div class="job">
+            <div class="job-posting" onclick="openSidePanel(this,'${application.job_id}')">
+              <div class="job-data">
+                <div class="job-status">
+                  ${application.status == 'Pending Review' ? `<div class="job-type" style="position: absolute;right:15px;background-color: orange;">
+                    <p>Pending Review</p>
+                  </div>` : application.status == 'Accepted' ? `<div class="job-type" style="position: absolute;right:15px;background-color: green;">
+                    <p>Accepted</p>
+                  </div>` : `<div class="job-type" style="position: absolute;right:15px;background-color: red;">
+                    <p>${application.status}</p>
+                  </div>`}
+                </div>
+                <span class="fas fa-trash"
+                  onclick="deleteApplication(event,'${application.application_id}','${application.user_id}')"
+                  style="position: absolute; right: 0;top:10px;cursor: pointer"></span>
+                <p class="job-name">${application.job_details.job_name}</p>
+                <p class="job-company" style="font-family: 'Inclusive Sans';">${application.job_details.company_name}
+                </p>
+                <p class="job-location" style="font-family: 'Inclusive Sans';">${application.job_details.location}</p>
+                <div class="job-description" style="margin-top: 30px;">
+                  <p>${application.job_details.job_description}</p>
+                </div>
+                <div class="" style="margin-top: 10px;">
+                  ${application.date_applied}
+                </div>
+              </div>
+            </div>
+          </div>
+          {% else %}
+          <div class="job">
+            <div class="job-posting" onclick="openSidePanel(this,'${application.application_id}')"
+              style="position: relative;">
+              <div class="job-data">
+                <div class="job-status">
+                  ${application.status == 'Pending Review' ? `<div class="job-type" style="position: absolute;right:15px;background-color: orange;">
+                    <p>Pending Review</p>
+                  </div>` : application.status == 'Accepted' ? `<div class="job-type" style="position: absolute;right:15px;background-color: green;">
+                    <p>Accepted</p>
+                  </div>` : `<div class="job-type" style="position: absolute;right:15px;background-color: red;">
+                    <p>${application.status}</p>
+                  </div>`}
+                </div>
+                <span class="fas fa-trash"
+                  onclick="deleteApplication(event,'${application.application_id}','${application.user_id}')"
+                  style="position: absolute; right: 0;top:10px;cursor: pointer"></span>
+                <p class="job-name">${application.job_details.job_name}</p>
+                <p class="job-company" style="font-family: 'Inclusive Sans';">${application.job_details.company_name}
+                </p>
+                <p class="job-location" style="font-family: 'Inclusive Sans';">${application.job_details.location}</p>
+                <div class="job-description" style="margin-top: 30px;">
+                  <p>${application.job_details.job_description}</p>
+                </div>
+                <div class="" style="margin-top: 10px;">
+                  ${application.date_applied.slice(0,16)}
+                </div>
+              <div class="job-user-profile"
+                style="position: absolute;right:30px;bottom:0;display: flex;align-items: center;">
+                <div class="job-profile" style="clip-path: circle(40%);margin: 3px;">
+                  <img src="../static/images/${application.user_info[6]}" alt="Profile picture"
+                    style="height: 30px;width: 30px;" />
+                </div>
+                <div class="job-username" style="margin: 3px;">
+                  ${application.user_info[3]}
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endif %}`})} else {
+            wholeJob.innerHTML = `<div style="display:flex;justify-content:center;align-items:center;height:100%;width:100%;"><p style="font-size:20px;font-family:'Onest';margin-top:100px">No applications</p></div>`
+          }
+        })}
 
   function handleApply(job_id) {
     event.preventDefault();
@@ -492,7 +611,7 @@
   function waitPageLoading() {
     const loadingPage = document.getElementById("loading-page");
     const [container] = document.getElementsByClassName("container");
-    const header = document.getElementById("main-header").firstElementChild;
+    const header = document.getElementsByClassName("main-header")[0].firstElementChild;
 
     loadingPage.style.display = "none";
     header.style.display = "flex";
@@ -643,33 +762,33 @@
                     </div>
                 </div>
 
-                <div class="side-application-comments" style="display:flex;text-align:center;justify-content:center;">
+                ${ data.application_details.cv_relative_path ? `
+                  <div class="side-application-cv" style="display:flex;text-align:center;justify-content:center;">
                   <div class="side-appplication-detail" style="margin:10px;padding:5px;">
                     <p style="font-weight:bold">CV</p>
-                    <p>${data.application_details.cv}</p>
+                    <a href="C:\\Users\\sheno\\Desktop\\Coding Projects\\flask\\Job Postings\\static\\images\\${data.application_details.cv_relative_path}">Download pdf</a></p>
                     </div>
                 </div>
+                  ` : ``}
 
-
-                <div class="side-job-other">
-                  <div id="map">
-                    </div>
-                  <div class="side-job-type-salary">
-                    <p style="border-bottom:1px solid black"> Requirement </p>
-                    <p>${data.when_needed}</p>
-                    <p style="border-bottom:1px solid black;margin-top:10px;"> Salary </p>
-                    <p>${data.average_pay}</p>
-                    </div>
-                  </div>
-                  <div class="side-job-apply" style="display:flex;justify-content:space-between">
-                    <div class="job-accept">
-                      Accept
+                  ${data.status === 'Pending Review' ? `
+                    <div class="side-job-apply" style="display:flex;justify-content:space-between">
+                    <div class="job-accept" onclick="manageApplication('Accept', '${data.application_id}')">
+                      <div style="border-radius:10px;background-color:green;color:black;padding:5px;cursor:pointer">
+                        Accept
                       </div>
-                      <div class="job-accept">
-                        Reject
+                    </div>
+                      <div class="job-accept" onclick="manageApplication('Reject','${data.application_id}')">
+                        <div style="border-radius:10px;background-color:red;color:black;padding:5px;cursor:pointer">
+                          Reject
+                        </div>
                       </div>
-
                 </div>
+                    ` : `
+                    <div class="side-job-apply" style="position:absolute;width:40%;left:100px">
+                    ${status.innerHTML}
+                </div>
+                    `}
               </div>
         `
         });
@@ -690,6 +809,50 @@
     sidePanel.style.position = "relative";
     feedSort.style.width = '460%';
 
+  }
+
+  function manageApplication(option, application_id){
+    if(option === 'Accept'){
+      const acceptOption = confirm('Are you sure you want to accept this application?')
+
+      if (!acceptOption) {
+        return
+      }
+      fetch(`/accept/${application_id}`, {
+        method: 'POST',
+        body: JSON.stringify({
+          application_id: application_id
+        })
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          window.location.href = '/applications'
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    } else {
+      const rejectOption = confirm('Are you sure you want to reject this application?')
+
+      if (!rejectOption) {
+        return
+      }
+      fetch(`/reject/${application_id}`, {
+        method: 'POST',
+        body: JSON.stringify({
+          application_id: application_id
+        })
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          window.location.href = '/applications'
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    }
   }
 
 

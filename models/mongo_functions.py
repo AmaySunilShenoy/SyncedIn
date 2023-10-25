@@ -1,6 +1,6 @@
 from flask import jsonify
 import datetime
-from flask_pymongo import ObjectId
+from flask_pymongo import ObjectId, DESCENDING
 import re
 from models.sqlite_functions import get_by_id as get_user_by_id
 
@@ -137,11 +137,17 @@ def create_application(collection,job_collection,save_collection, job_id, user_i
         return jsonify({"data":False})
     
 # User / Admin
-def get_applications(collection,job_collection,save_collection, user_id):
+def get_applications(collection,job_collection,save_collection, user_id,status=None):
     if user_id == 'admin':
-        applications = list(collection.find())
+        if status and status != 'All':
+            applications = list(collection.find({'status':f'{status}'}).sort('date_applied',DESCENDING))
+        else:
+            applications = list(collection.find().sort('date_applied',DESCENDING))
     else:
-        applications = list(collection.find({'user_id':user_id}))
+        if status and status != 'All':
+            applications = list(collection.find({'user_id':user_id,'status':f'{status}'}).sort('date_applied',DESCENDING))
+        else:
+            applications = list(collection.find({'user_id':user_id}).sort('date_applied',DESCENDING))
     application_list = []
     for application in applications:
         application_data = {
@@ -203,3 +209,17 @@ def delete_job(collection, save_collection, application_collection, job_id):
 
 
 # Admin
+def accept_application(collection, application_id):
+    try:
+        collection.update_one({'_id': ObjectId(application_id)}, {'$set': {'status': 'Accepted'}})
+        return jsonify({"data": True})
+    except:
+        return jsonify({"data": False})
+    
+# Admin
+def reject_application(collection, application_id):
+    try:
+        collection.update_one({'_id': ObjectId(application_id)}, {'$set': {'status': 'Rejected'}})
+        return jsonify({"data": True})
+    except:
+        return jsonify({"data": False})

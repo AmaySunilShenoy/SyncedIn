@@ -54,20 +54,20 @@ def load_user(user_id):
 cache=Cache(app,config={'CACHE_TYPE': 'simple'})
 
 
-# logging.basicConfig(filename='app.log', level=logging.INFO, format='%(asctime)s [%(levelname)s] - %(message)s')
-# print('Log available in app.log')
-# @app.before_request
-# def log_request_info():
-#     logging.info('Request Method : %s', request.method)
-#     logging.info('Request url : %s', request.url)
-#     logging.info('Request Headers : %s', dict(request.headers))
-#     logging.info('Request Data : %s', request.data)
+logging.basicConfig(filename='app.log', level=logging.INFO, format='%(asctime)s [%(levelname)s] - %(message)s')
+print('Log available in app.log')
+@app.before_request
+def log_request_info():
+    logging.info('Request Method : %s', request.method)
+    logging.info('Request url : %s', request.url)
+    logging.info('Request Headers : %s', dict(request.headers))
+    logging.info('Request Data : %s', request.data)
 
-# @app.after_request
-# def log_response_info(response):
-#     logging.info('Response Status: %s', response.status)
-#     logging.info('Request Headers : %s', dict(request.headers))
-#     return response
+@app.after_request
+def log_response_info(response):
+    logging.info('Response Status: %s', response.status)
+    logging.info('Request Headers : %s', dict(request.headers))
+    return response
 
 @app.route('/')
 def welcome():
